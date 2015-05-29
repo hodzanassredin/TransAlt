@@ -10,8 +10,8 @@ Introducing your project
 Say more
 
 *)
-#r "FSharp.ProjectScaffold.dll"
-open FSharp.ProjectScaffold
+#r "TransAlt.dll"
+open TransAlt
 
 Library.hello 0
 (**

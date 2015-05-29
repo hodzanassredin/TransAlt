@@ -1,6 +1,6 @@
-﻿module FSharp.ProjectScaffold.Tests
+module TransAlt.Tests
 
-open FSharp.ProjectTemplate
+open TransAlt
 open NUnit.Framework
 
 [<Test>]
