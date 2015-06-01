@@ -15,6 +15,7 @@ withAck allows you to create your Alt object with attached handlers for success/
 merge(alt1,alt2) will return tule with results of als executed in parallel
 bind(alt1,fn) allow to compose your alt computations
   
+joinads sample
 
 *)
 #r "TransAlt/TransAlt.dll"
@@ -24,7 +25,6 @@ open Channel
 open Lens
 open System.Threading
 
-////joinads sample
 type St2 =
     { putStringC: Channel<string>; 
       putIntC: Channel<int>; 
@@ -67,7 +67,6 @@ let getEcho = tranB{
     let! s = St2.echo.deq()
     Logger.logf "getEcho" "GOT: %A" s
 }
-// Put 5 values to 'putString' and 5 values to 'putInt'
 let put5 =tranB { 
             for i in [1 .. 5] do
                 Logger.logf "put5" "iter %d" i
@@ -81,7 +80,6 @@ mergeB{
 (**
 async cancellation
 *)
-//async cancellation
 let asyncWitchCancellation wrkfl =
     withAck(fun nack -> async{
         let cts = new CancellationTokenSource()
@@ -232,7 +230,6 @@ let queries = Array.ofSeq (seq{
                                 Logger.logf "philosophers" "left %d "(i % n + 1)
                                 let right = St4.chopsticks (i % n + 1)
                                 let random = new Random()
-                                //yield merge(always(i,random,left,right),merge(ChEx.altGet (St4.hungry i), merge(ChEx.altGet left, ChEx.altGet right)))
                                 yield queryB{
                                     for _,_,_ in ((St4.hungry i).deq(), left.deq(), right.deq()) do
                                     select(i,random,left,right)
@@ -251,7 +248,6 @@ let findAndDo = tranB{
     
 let add_chopsticks = tranB{
     for i in 1..n do
-        //Logger.logf "philosophers" "adding chopstick %d" i 
         do! (St4.chopsticks i).enq()
     }
 let random = new Random()  
@@ -263,4 +259,7 @@ let hungrySet = tranB{
 }
 
 mergeXs [whileOk findAndDo;whileOk hungrySet;add_chopsticks] |> pickWithResultState phioSt |> Async.RunSynchronously
+(**
+end
+*)
 
