@@ -26,10 +26,11 @@ Example
 This example demonstrates using a function defined in this sample library.
 
 *)
-#r "TransAlt.dll"
+#r "TransAlt/TransAlt.dll"
 open TransAlt
+open Alt
 
-printfn "hello = %i" <| Library.hello 0
+Alt.choose(always(1), always(2)) |> Alt.pick ()
 
 (**
 Some more info
@@ -59,9 +60,9 @@ The library is available under Public Domain license, which allows modification 
 redistribution for both commercial and non-commercial purposes. For more information see the 
 [License file][license] in the GitHub repository. 
 
-  [content]: https://github.com/fsprojects/TransAlt/tree/master/docs/content
-  [gh]: https://github.com/fsprojects/TransAlt
-  [issues]: https://github.com/fsprojects/TransAlt/issues
-  [readme]: https://github.com/fsprojects/TransAlt/blob/master/README.md
-  [license]: https://github.com/fsprojects/TransAlt/blob/master/LICENSE.txt
+  [content]: https://github.com/hodzanassredin/TransAlt/tree/master/docs/content
+  [gh]: https://github.com/hodzanassredin/TransAlt
+  [issues]: https://github.com/hodzanassredin/TransAlt/issues
+  [readme]: https://github.com/hodzanassredin/TransAlt/blob/master/README.md
+  [license]: https://github.com/hodzanassredin/TransAlt/blob/master/LICENSE.txt
 *)

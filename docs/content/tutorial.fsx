@@ -10,7 +10,7 @@ Introducing your project
 Say more
 
 *)
-#r "TransAlt.dll"
+#r "TransAlt/TransAlt.dll"
 open TransAlt
 
 Library.hello 0

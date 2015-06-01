@@ -15,7 +15,7 @@ let ignoreAsyncRes w =
         return ()
     }
 
-let add_nack (alt:Alt<'s,'r>)  = 
+let add_ack (alt:Alt<'s,'r>)  = 
         let promise = Promise.create()
         withAck (fun (ack : Alt<'s, bool>) -> 
                     let ack = map(ack, fun x -> promise.signal(x) |> ignore
@@ -35,7 +35,7 @@ module Assert =
             | _ -> Assert.Fail()
     let IsError (msg,res) = 
         match res with
-            | Error(exn) -> Assert.Equals(msg, exn.Message) |> ignore
+            | Error(exn) -> Assert.AreEqual(msg, exn.Message)
             | _ -> Assert.Fail()
 [<Test>]
 let ``query builder should select final result`` () =
@@ -46,6 +46,13 @@ let ``query builder should select final result`` () =
                 } |> pick () |> test
 
    Assert.IsOk(2,result)
+
+[<Test>]
+let ``promiase should not be able to be set two times`` () =
+    let promise = Promise.create()
+
+    Assert.IsTrue(promise.signal())
+    Assert.IsFalse(promise.signal())
 
 [<Test>]
 let ``query builder should block on when where is false`` () =
@@ -63,9 +70,9 @@ let ``always should return ok with specified value`` () =
 
 [<Test>]
 let ``winner whould not throw nack`` () =
-   let alt, nack = always(2) |> add_nack
+   let alt, ack = always(2) |> add_ack
    let _ =  alt |> pick () |> test
-   let isNacked = nack |> Async.RunSynchronously
+   let isNacked = ack |> Async.RunSynchronously |> not
    Assert.IsFalse(isNacked)
 
 [<Test>]
@@ -96,27 +103,29 @@ let ``choose should return second result if first fails`` () =
     Assert.IsOk((), choose(after 300 (),error 100)|> pick () |> test)    
 [<Test>]
 let ``choose should return error if both fail`` () =
-    Assert.IsError("problem", choose(error 300 ,error 100)|> pick () |> test) 
+    Assert.IsError("One or more errors occurred.", choose(error 300 ,error 100)|> pick () |> test) 
 
 [<Test>]
-let ``choose should return blocked when tasks return error and blocked result`` () =
-    Assert.IsBlockForever(choose(never(),error 100)|> pick () |> test) 
+let ``choose should return error when tasks return error and blocked result`` () =
+    Assert.IsError("problem", choose(never(),error 100)|> pick () |> test) 
 
 [<Test>]
 let ``choose should return first result and nack second`` () =
-    let first, first_nack = after 200 200 |> add_nack; 
-    let second, second_nack = after 300 300 |> add_nack; 
+    let first, first_ack = after 200 200 |> add_ack; 
+    let second, second_ack = after 300 300 |> add_ack; 
     let res = choose(first,second) |> pick () |> test
     Assert.IsOk(200, res)
-    let first_nack = first_nack |> Async.RunSynchronously
-    Assert.IsFalse(first_nack)
-    let second_nack = second_nack |> Async.RunSynchronously
-    Assert.IsFalse(second_nack)
+    let first_ack = first_ack |> Async.RunSynchronously
+    Assert.IsTrue(first_ack)
+    let second_ack = second_ack |> Async.RunSynchronously
+    Assert.IsFalse(second_ack)
 
 let toAlways a alt  = bind(alt,fun  _ -> always(a))
-let wrapToPromise alt = 
-    let promise = Promise.create()
-    wrap(alt,fun x -> promise.signal(x) |> ignore), promise.signal
+let wrapToPromise name alt  = 
+    let p = Promise.create()
+    wrap(alt,fun x -> printfn "wrapToPromise signal from %s" name 
+                      Logger.logf "wrapToPromise" "wrap signal from %s" name 
+                      p.signal(x) |> ignore), p
 
 open Lens
 open Channel
@@ -138,7 +147,7 @@ let ``alt should change state`` () =
     Assert.IsTrue(state.Count = 1)
     let v = state.Get()
     match v with
-        | State.NotBlocked(s,inpEl) -> Assert.Equals(inpEl,1) |> ignore
+        | State.NotBlocked(s,inpEl) -> Assert.AreEqual(inpEl,1) 
         | _ -> Assert.Fail()
 
 [<Test>]
@@ -147,15 +156,16 @@ let ``bind should use the same state`` () =
     Assert.IsOk(1, res)
  
 [<Test>]
-let ``wrao should be invoked only on success`` () =
-    let first, first_wrap = after 200 200 |> wrapToPromise; 
-    let second, second_wrap = after 300 300 |> wrapToPromise; 
+let ``wrap should be invoked only on success`` () =
+    let first, first_wrap = after 200 200 |> wrapToPromise "first"; 
+    let second, second_wrap = after 300 300 |> wrapToPromise "second"; 
     let res = choose(first,second) |> pick () |> test
     Assert.IsOk(200, res)
-    let first_wrap = first_wrap(Ok(1))
-    Assert.IsTrue(first_wrap)
-    let second_wrap = second_wrap(Ok(1))
-    Assert.IsFalse(second_wrap)
+    let first_res = first_wrap.future |> Async.RunSynchronously
+    Assert.AreEqual(first_res, Ok(200))
+    //let snd_res = second_wrap.future |> Async.RunSynchronously
+    let second_wrap = second_wrap.signal(Ok(1))
+    Assert.IsTrue(second_wrap)
 
 [<Test>]
 let ``alt should return blocked result when proccess is blocked`` () =
@@ -180,7 +190,7 @@ let ``merge should return results form all sub tasks`` () =
 [<Test>]
 let ``choose should return not blocked result`` () =
     let res = Alt.choose(id_lens.enq(1), bind(id_lens.deq(), fun _ -> always())) |> pick St |> test
-    Assert.IsOk((1,2),res)
+    Assert.IsOk((),res)
 
 //[ChEx.AltAdd(id_lens,1)  |> toAlways -1; ChEx.altGet id_lens] |> chooseXs |> pickWithResultState St |> test
 //
