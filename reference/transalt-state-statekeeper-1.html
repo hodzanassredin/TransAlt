@@ -37,6 +37,9 @@
 
 <h1>StateKeeper<'s></h1>
 <div class="xmldoc">
+<p>abstract state keeper</p>
+
+
 </div>
   <h3>Instance members</h3>
   <table class="table table-bordered member-list">
@@ -47,210 +50,243 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '116', 116)" onmouseover="showTip(event, '116', 116)">
+          <code onmouseout="hideTip(event, '109', 109)" onmouseover="showTip(event, '109', 109)">
             Apply(arg1, arg2)
           </code>
-          <div class="tip" id="116">
+          <div class="tip" id="109">
             <strong>Signature:</strong> (ProcessId * StateOp&lt;&#39;s,&#39;r&gt;) -&gt; Async&lt;StateResp&lt;&#39;r&gt;&gt;<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L30-30" class="github-link">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L42-42" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>Apply some state operation to a state</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '110', 110)" onmouseover="showTip(event, '110', 110)">
+            GetProcessId(arg1)
+          </code>
+          <div class="tip" id="110">
+            <strong>Signature:</strong> IsMutatesState -&gt; Async&lt;ProcessId&gt;<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L58-58" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>get id for a new process</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '111', 111)" onmouseover="showTip(event, '111', 111)">
+            InitValue
+          </code>
+          <div class="tip" id="111">
+            <strong>Signature:</strong> &#39;s<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L48-48" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>initial state</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '112', 112)" onmouseover="showTip(event, '112', 112)">
+            IsNotChanged
+          </code>
+          <div class="tip" id="112">
+            <strong>Signature:</strong> bool<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L50-50" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>is state changed</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '113', 113)" onmouseover="showTip(event, '113', 113)">
+            IsThreadSafe
+          </code>
+          <div class="tip" id="113">
+            <strong>Signature:</strong> bool<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L56-56" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>is thread safe state keeper</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '114', 114)" onmouseover="showTip(event, '114', 114)">
+            Merge(arg1)
+          </code>
+          <div class="tip" id="114">
+            <strong>Signature:</strong> StateKeeper&lt;&#39;s&gt; -&gt; Async&lt;StateResp&lt;unit&gt;&gt;<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L44-44" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>replace current state with another</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '115', 115)" onmouseover="showTip(event, '115', 115)">
+            MergeLens(arg1 arg2)
+          </code>
+          <div class="tip" id="115">
+            <strong>Signature:</strong> Lens&lt;&#39;s,&#39;r&gt; -&gt; StateKeeper&lt;&#39;r&gt; -&gt; Async&lt;StateResp&lt;unit&gt;&gt;<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L54-54" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>replace part of state specified by a lens by another state</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '116', 116)" onmouseover="showTip(event, '116', 116)">
+            ReleaseProcessId(arg1)
+          </code>
+          <div class="tip" id="116">
+            <strong>Signature:</strong> ProcessId -&gt; unit<br />
+              <strong>Modifiers:</strong> abstract<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L60-60" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>process are stopping and signals that process id is not working anymore</p>
+
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '117', 117)" onmouseover="showTip(event, '117', 117)">
-            GetProcessId(arg1)
+            RunningProcsCountExcludeMe(arg1)
           </code>
           <div class="tip" id="117">
-            <strong>Signature:</strong> IsMutatesState -&gt; Async&lt;ProcessId&gt;<br />
+            <strong>Signature:</strong> ProcessId -&gt; Async&lt;int&gt;<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L38-38" class="github-link">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L62-62" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>count of running not blocked processes exclude specifier procId</p>
+
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '118', 118)" onmouseover="showTip(event, '118', 118)">
-            InitValue
+            Stop()
           </code>
           <div class="tip" id="118">
-            <strong>Signature:</strong> &#39;s<br />
+            <strong>Signature:</strong> unit -&gt; unit<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L33-33" class="github-link">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L52-52" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>stop</p>
+
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '119', 119)" onmouseover="showTip(event, '119', 119)">
-            IsNotChanged
-          </code>
-          <div class="tip" id="119">
-            <strong>Signature:</strong> bool<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L34-34" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '120', 120)" onmouseover="showTip(event, '120', 120)">
-            IsThreadSafe
-          </code>
-          <div class="tip" id="120">
-            <strong>Signature:</strong> bool<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L37-37" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '121', 121)" onmouseover="showTip(event, '121', 121)">
-            Merge(arg1)
-          </code>
-          <div class="tip" id="121">
-            <strong>Signature:</strong> StateKeeper&lt;&#39;s&gt; -&gt; Async&lt;StateResp&lt;unit&gt;&gt;<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L31-31" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '122', 122)" onmouseover="showTip(event, '122', 122)">
-            MergeLens(arg1 arg2)
-          </code>
-          <div class="tip" id="122">
-            <strong>Signature:</strong> Lens&lt;&#39;s,&#39;r&gt; -&gt; StateKeeper&lt;&#39;r&gt; -&gt; Async&lt;StateResp&lt;unit&gt;&gt;<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L36-36" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '123', 123)" onmouseover="showTip(event, '123', 123)">
-            ReleaseProcessId(arg1)
-          </code>
-          <div class="tip" id="123">
-            <strong>Signature:</strong> ProcessId -&gt; unit<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L39-39" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '124', 124)" onmouseover="showTip(event, '124', 124)">
-            RunningProcsCountExcludeMe(arg1)
-          </code>
-          <div class="tip" id="124">
-            <strong>Signature:</strong> ProcessId -&gt; Async&lt;int&gt;<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L40-40" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '125', 125)" onmouseover="showTip(event, '125', 125)">
-            Stop()
-          </code>
-          <div class="tip" id="125">
-            <strong>Signature:</strong> unit -&gt; unit<br />
-              <strong>Modifiers:</strong> abstract<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L35-35" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '126', 126)" onmouseover="showTip(event, '126', 126)">
             Value
           </code>
-          <div class="tip" id="126">
+          <div class="tip" id="119">
             <strong>Signature:</strong> &#39;s<br />
               <strong>Modifiers:</strong> abstract<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L32-32" class="github-link">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L46-46" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>current state</p>
+
+
+
         </td>
       </tr>
     </tbody>

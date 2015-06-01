@@ -37,6 +37,9 @@
 
 <h1>Channel<'a></h1>
 <div class="xmldoc">
+<p>represents an immutable FIFO queue</p>
+
+
 </div>
   <h3>Record Fields</h3>
   <table class="table table-bordered member-list">
@@ -47,11 +50,29 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '97', 97)" onmouseover="showTip(event, '97', 97)">
+          <code onmouseout="hideTip(event, '90', 90)" onmouseover="showTip(event, '90', 90)">
             maxCount
           </code>
-          <div class="tip" id="97">
+          <div class="tip" id="90">
             <strong>Signature:</strong> int option<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Channel.fs#L9-9" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '91', 91)" onmouseover="showTip(event, '91', 91)">
+            name
+          </code>
+          <div class="tip" id="91">
+            <strong>Signature:</strong> string<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -65,15 +86,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '98', 98)" onmouseover="showTip(event, '98', 98)">
-            name
+          <code onmouseout="hideTip(event, '92', 92)" onmouseover="showTip(event, '92', 92)">
+            rxs
           </code>
-          <div class="tip" id="98">
-            <strong>Signature:</strong> string<br />
+          <div class="tip" id="92">
+            <strong>Signature:</strong> &#39;a list<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Channel.fs#L7-7" class="github-link">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Channel.fs#L11-11" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -83,33 +104,15 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '99', 99)" onmouseover="showTip(event, '99', 99)">
-            rxs
+          <code onmouseout="hideTip(event, '93', 93)" onmouseover="showTip(event, '93', 93)">
+            xs
           </code>
-          <div class="tip" id="99">
+          <div class="tip" id="93">
             <strong>Signature:</strong> &#39;a list<br />
                       </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Channel.fs#L10-10" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '100', 100)" onmouseover="showTip(event, '100', 100)">
-            xs
-          </code>
-          <div class="tip" id="100">
-            <strong>Signature:</strong> &#39;a list<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Channel.fs#L9-9" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -127,29 +130,11 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '101', 101)" onmouseover="showTip(event, '101', 101)">
+          <code onmouseout="hideTip(event, '94', 94)" onmouseover="showTip(event, '94', 94)">
             AsString
           </code>
-          <div class="tip" id="101">
+          <div class="tip" id="94">
             <strong>Signature:</strong> string<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Channel.fs#L11-11" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '102', 102)" onmouseover="showTip(event, '102', 102)">
-            Count
-          </code>
-          <div class="tip" id="102">
-            <strong>Signature:</strong> int<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -163,29 +148,11 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '103', 103)" onmouseover="showTip(event, '103', 103)">
-            Get()
+          <code onmouseout="hideTip(event, '95', 95)" onmouseover="showTip(event, '95', 95)">
+            Count
           </code>
-          <div class="tip" id="103">
-            <strong>Signature:</strong> unit -&gt; OpResp&lt;Channel&lt;&#39;a&gt; * &#39;a&gt;<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Channel.fs#L17-17" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '104', 104)" onmouseover="showTip(event, '104', 104)">
-            IsEmpty
-          </code>
-          <div class="tip" id="104">
-            <strong>Signature:</strong> bool<br />
+          <div class="tip" id="95">
+            <strong>Signature:</strong> int<br />
                       </div>
         </td>
         <td class="xmldoc">
@@ -199,15 +166,51 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '105', 105)" onmouseover="showTip(event, '105', 105)">
-            Put(x)
+          <code onmouseout="hideTip(event, '96', 96)" onmouseover="showTip(event, '96', 96)">
+            Get()
           </code>
-          <div class="tip" id="105">
-            <strong>Signature:</strong> x:&#39;a -&gt; OpResp&lt;Channel&lt;&#39;a&gt;&gt;<br />
+          <div class="tip" id="96">
+            <strong>Signature:</strong> unit -&gt; OpResp&lt;Channel&lt;&#39;a&gt; * &#39;a&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Channel.fs#L18-18" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '97', 97)" onmouseover="showTip(event, '97', 97)">
+            IsEmpty
+          </code>
+          <div class="tip" id="97">
+            <strong>Signature:</strong> bool<br />
                       </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Channel.fs#L14-14" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '98', 98)" onmouseover="showTip(event, '98', 98)">
+            Put(x)
+          </code>
+          <div class="tip" id="98">
+            <strong>Signature:</strong> x:&#39;a -&gt; OpResp&lt;Channel&lt;&#39;a&gt;&gt;<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Channel.fs#L15-15" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>

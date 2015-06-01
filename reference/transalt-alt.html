@@ -37,6 +37,9 @@
 
 <h1>Alt</h1>
 <div class="xmldoc">
+<p>first class cancellable async operations</p>
+
+
 </div>
 
 <!-- Render nested types and modules, if there are any -->
@@ -51,31 +54,37 @@
           <td class="type-name">
             <a href="transalt-alt-alt-2.html">Alt<'s, 'r></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>first class cancellable transactional async computation</p>
+
+
+</td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="transalt-alt-altquerybuilder.html">AltQueryBuilder</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>imitating joinads</p>
+
+
+</td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="transalt-alt-choosebuilder.html">ChooseBuilder</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>nice syntax for choose</p>
+
+
+</td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="transalt-alt-mergebuilder.html">MergeBuilder</a>
           </td>
-          <td class="xmldoc"></td>
-        </tr>
-        <tr>
-          <td class="type-name">
-            <a href="transalt-alt-restartsignal.html">RestartSignal</a>
-          </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>nice syntax for merge</p>
+
+
+</td>
         </tr>
         <tr>
           <td class="type-name">
@@ -87,19 +96,28 @@
           <td class="type-name">
             <a href="transalt-alt-transaction-2.html">Transaction<'s, 'r></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>Transaction object represents current transaction state with a function for a result commit</p>
+
+
+</td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="transalt-alt-transactionbuilder.html">TransactionBuilder</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>builder for transactional alternatives</p>
+
+
+</td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="transalt-alt-transactionresult-1.html">TransactionResult<'r></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>result of a transaction</p>
+
+
+</td>
         </tr>
     </tbody>
   </table>
@@ -119,15 +137,18 @@
             after ms v
           </code>
           <div class="tip" id="1">
-            <strong>Signature:</strong> ms:int -&gt; v:&#39;?7355 -&gt; Alt&lt;&#39;?7356,&#39;?7355&gt;<br />
-                          <strong>Type parameters:</strong> '?7355, '?7356          </div>
+            <strong>Signature:</strong> ms:int -&gt; v:&#39;?7349 -&gt; Alt&lt;&#39;?7350,&#39;?7349&gt;<br />
+                          <strong>Type parameters:</strong> '?7349, '?7350          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L260-260" class="github-link">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L271-271" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>commits value after a specified amount of time</p>
+
+
+
         </td>
       </tr>
       <tr>
@@ -137,101 +158,116 @@
             always v
           </code>
           <div class="tip" id="2">
-            <strong>Signature:</strong> v:&#39;?7300 -&gt; Alt&lt;&#39;?7301,&#39;?7300&gt;<br />
-                          <strong>Type parameters:</strong> '?7300, '?7301          </div>
+            <strong>Signature:</strong> v:&#39;?7296 -&gt; Alt&lt;&#39;?7297,&#39;?7296&gt;<br />
+                          <strong>Type parameters:</strong> '?7296, '?7297          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L134-134" class="github-link">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L138-138" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>always commits success with a given value</p>
+
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '3', 3)" onmouseover="showTip(event, '3', 3)">
-            asyncAliasing arg00
+            asyncMap wrkfl f
           </code>
           <div class="tip" id="3">
-            <strong>Signature:</strong> arg00:Async&lt;&#39;?7285&gt; -&gt; Async&lt;Async&lt;&#39;?7285&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?7285          </div>
+            <strong>Signature:</strong> wrkfl:Async&lt;&#39;?7274&gt; -&gt; f:(&#39;?7274 -&gt; &#39;?7275) -&gt; Async&lt;&#39;?7275&gt;<br />
+                          <strong>Type parameters:</strong> '?7274, '?7275          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L39-39" class="github-link">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L25-25" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>map ans async result</p>
+
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '4', 4)" onmouseover="showTip(event, '4', 4)">
-            asyncMap wrkfl f
+            asyncReturn x
           </code>
           <div class="tip" id="4">
-            <strong>Signature:</strong> wrkfl:Async&lt;&#39;?7276&gt; -&gt; f:(&#39;?7276 -&gt; &#39;?7277) -&gt; Async&lt;&#39;?7277&gt;<br />
-                          <strong>Type parameters:</strong> '?7276, '?7277          </div>
+            <strong>Signature:</strong> x:&#39;?7272 -&gt; Async&lt;&#39;?7272&gt;<br />
+                          <strong>Type parameters:</strong> '?7272          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L21-21" class="github-link">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L23-23" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>simle async monad return</p>
+
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '5', 5)" onmouseover="showTip(event, '5', 5)">
-            asyncReturn x
+            bind (one, f)
           </code>
           <div class="tip" id="5">
-            <strong>Signature:</strong> x:&#39;?7274 -&gt; Async&lt;&#39;?7274&gt;<br />
-                          <strong>Type parameters:</strong> '?7274          </div>
+            <strong>Signature:</strong> (one:Alt&lt;&#39;s,&#39;a&gt; * f:(&#39;a -&gt; Alt&lt;&#39;s,&#39;b&gt;)) -&gt; Alt&lt;&#39;s,&#39;b&gt;<br />
+                          <strong>Type parameters:</strong> 's, 'a, 'b          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L20-20" class="github-link">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L117-117" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>bind an alternative to an continuation</p>
+
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '6', 6)" onmouseover="showTip(event, '6', 6)">
-            bind (one, f)
+            choose (one, two)
           </code>
           <div class="tip" id="6">
-            <strong>Signature:</strong> (one:Alt&lt;&#39;s,&#39;a&gt; * f:(&#39;a -&gt; Alt&lt;&#39;s,&#39;b&gt;)) -&gt; Alt&lt;&#39;s,&#39;b&gt;<br />
-                          <strong>Type parameters:</strong> 's, 'a, 'b          </div>
+            <strong>Signature:</strong> (one:Alt&lt;&#39;s,&#39;r&gt; * two:Alt&lt;&#39;s,&#39;r&gt;) -&gt; Alt&lt;&#39;s,&#39;r&gt;<br />
+                          <strong>Type parameters:</strong> 's, 'r          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L114-114" class="github-link">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L49-49" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>Creates an alternative that is available when any one of the given alternatives is.</p>
+
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '7', 7)" onmouseover="showTip(event, '7', 7)">
-            choose (one, two)
+            chooseB 
           </code>
           <div class="tip" id="7">
-            <strong>Signature:</strong> (one:Alt&lt;&#39;s,&#39;r&gt; * two:Alt&lt;&#39;s,&#39;r&gt;) -&gt; Alt&lt;&#39;s,&#39;r&gt;<br />
-                          <strong>Type parameters:</strong> 's, 'r          </div>
+            <strong>Signature:</strong> ChooseBuilder<br />
+                      </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L45-45" class="github-link">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L371-371" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -242,407 +278,32 @@
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '8', 8)" onmouseover="showTip(event, '8', 8)">
-            chooseB 
+            chooseXs xs
           </code>
           <div class="tip" id="8">
-            <strong>Signature:</strong> ChooseBuilder<br />
-                      </div>
+            <strong>Signature:</strong> xs:seq&lt;Alt&lt;&#39;?7352,&#39;?7353&gt;&gt; -&gt; Alt&lt;&#39;?7352,&#39;?7353&gt;<br />
+                          <strong>Type parameters:</strong> '?7352, '?7353          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L356-356" class="github-link">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L275-275" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>reduces seq of altrnatives with choose</p>
+
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '9', 9)" onmouseover="showTip(event, '9', 9)">
-            chooseXs xs
-          </code>
-          <div class="tip" id="9">
-            <strong>Signature:</strong> xs:seq&lt;Alt&lt;&#39;?7358,&#39;?7359&gt;&gt; -&gt; Alt&lt;&#39;?7358,&#39;?7359&gt;<br />
-                          <strong>Type parameters:</strong> '?7358, '?7359          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L264-264" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '10', 10)" onmouseover="showTip(event, '10', 10)">
             delay f
           </code>
-          <div class="tip" id="10">
-            <strong>Signature:</strong> f:(unit -&gt; Async&lt;Alt&lt;&#39;?7340,&#39;?7341&gt;&gt;) -&gt; Alt&lt;&#39;?7340,&#39;?7341&gt;<br />
-                          <strong>Type parameters:</strong> '?7340, '?7341          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L248-248" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '11', 11)" onmouseover="showTip(event, '11', 11)">
-            fromAsync wrkfl
-          </code>
-          <div class="tip" id="11">
-            <strong>Signature:</strong> wrkfl:Async&lt;&#39;r&gt; -&gt; Alt&lt;&#39;s,&#39;r&gt;<br />
-                          <strong>Type parameters:</strong> 'r, 's          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L27-27" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '12', 12)" onmouseover="showTip(event, '12', 12)">
-            guard g
-          </code>
-          <div class="tip" id="12">
-            <strong>Signature:</strong> g:Async&lt;Alt&lt;&#39;?7337,&#39;?7338&gt;&gt; -&gt; Alt&lt;&#39;?7337,&#39;?7338&gt;<br />
-                          <strong>Type parameters:</strong> '?7337, '?7338          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L247-247" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '13', 13)" onmouseover="showTip(event, '13', 13)">
-            ife (pred, thenAlt, elseAlt)
-          </code>
-          <div class="tip" id="13">
-            <strong>Signature:</strong> (pred:Alt&lt;&#39;?7343,bool&gt; * thenAlt:Alt&lt;&#39;?7343,&#39;?7344&gt; * elseAlt:Alt&lt;&#39;?7343,&#39;?7344&gt;) -&gt; Alt&lt;&#39;?7343,&#39;?7344&gt;<br />
-                          <strong>Type parameters:</strong> '?7343, '?7344          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L250-250" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '14', 14)" onmouseover="showTip(event, '14', 14)">
-            isMutatesState _arg1
-          </code>
-          <div class="tip" id="14">
-            <strong>Signature:</strong> _arg1:Alt&lt;&#39;?7266,&#39;?7267&gt; -&gt; IsMutatesState<br />
-                          <strong>Type parameters:</strong> '?7266, '?7267          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L18-18" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '15', 15)" onmouseover="showTip(event, '15', 15)">
-            isMutatesState2 (arg1, arg2)
-          </code>
-          <div class="tip" id="15">
-            <strong>Signature:</strong> (Alt&lt;&#39;?7269,&#39;?7270&gt; * Alt&lt;&#39;?7271,&#39;?7272&gt;) -&gt; bool<br />
-                          <strong>Type parameters:</strong> '?7269, '?7270, '?7271, '?7272          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L19-19" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '16', 16)" onmouseover="showTip(event, '16', 16)">
-            map (alt, f)
-          </code>
-          <div class="tip" id="16">
-            <strong>Signature:</strong> (alt:Alt&lt;&#39;?7307,&#39;?7308&gt; * f:(&#39;?7308 -&gt; &#39;?7309)) -&gt; Alt&lt;&#39;?7307,&#39;?7309&gt;<br />
-                          <strong>Type parameters:</strong> '?7307, '?7308, '?7309          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L137-137" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '17', 17)" onmouseover="showTip(event, '17', 17)">
-            mapSt lens alt
-          </code>
-          <div class="tip" id="17">
-            <strong>Signature:</strong> lens:Lens&lt;&#39;?7373,&#39;?7374&gt; -&gt; alt:Alt&lt;&#39;?7374,&#39;?7375&gt; -&gt; Alt&lt;&#39;?7373,&#39;?7375&gt;<br />
-                          <strong>Type parameters:</strong> '?7373, '?7374, '?7375          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L291-291" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '18', 18)" onmouseover="showTip(event, '18', 18)">
-            merge (one, two)
-          </code>
-          <div class="tip" id="18">
-            <strong>Signature:</strong> (one:Alt&lt;&#39;s,&#39;a&gt; * two:Alt&lt;&#39;s,&#39;b&gt;) -&gt; Alt&lt;&#39;s,(&#39;a * &#39;b)&gt;<br />
-                          <strong>Type parameters:</strong> 's, 'a, 'b          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L174-174" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '19', 19)" onmouseover="showTip(event, '19', 19)">
-            mergeB 
-          </code>
-          <div class="tip" id="19">
-            <strong>Signature:</strong> MergeBuilder<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L362-362" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '20', 20)" onmouseover="showTip(event, '20', 20)">
-            mergeChoose (one, two)
-          </code>
-          <div class="tip" id="20">
-            <strong>Signature:</strong> (one:Alt&lt;&#39;s,&#39;r&gt; * two:Alt&lt;&#39;s,&#39;r2&gt;) -&gt; Alt&lt;&#39;s,(&#39;r * &#39;r2)&gt;<br />
-                          <strong>Type parameters:</strong> 's, 'r, 'r2          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L170-170" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '21', 21)" onmouseover="showTip(event, '21', 21)">
-            mergeChooseXs xs
-          </code>
-          <div class="tip" id="21">
-            <strong>Signature:</strong> xs:seq&lt;Alt&lt;&#39;s,&#39;r&gt;&gt; -&gt; Alt&lt;&#39;s,seq&lt;&#39;r&gt;&gt;<br />
-                          <strong>Type parameters:</strong> 's, 'r          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L269-269" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '22', 22)" onmouseover="showTip(event, '22', 22)">
-            mergeXs xs
-          </code>
-          <div class="tip" id="22">
-            <strong>Signature:</strong> xs:seq&lt;Alt&lt;&#39;s,&#39;r&gt;&gt; -&gt; Alt&lt;&#39;s,seq&lt;&#39;r&gt;&gt;<br />
-                          <strong>Type parameters:</strong> 's, 'r          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L265-265" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '23', 23)" onmouseover="showTip(event, '23', 23)">
-            never ()
-          </code>
-          <div class="tip" id="23">
-            <strong>Signature:</strong> unit -&gt; Alt&lt;&#39;?7311,&#39;?7312&gt;<br />
-                          <strong>Type parameters:</strong> '?7311, '?7312          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L138-138" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '24', 24)" onmouseover="showTip(event, '24', 24)">
-            none ()
-          </code>
-          <div class="tip" id="24">
-            <strong>Signature:</strong> unit -&gt; Alt&lt;&#39;?7346,&#39;?7347 option&gt;<br />
-                          <strong>Type parameters:</strong> '?7346, '?7347          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L254-254" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '25', 25)" onmouseover="showTip(event, '25', 25)">
-            pick state alt
-          </code>
-          <div class="tip" id="25">
-            <strong>Signature:</strong> state:&#39;?7370 -&gt; alt:Alt&lt;&#39;?7370,&#39;?7371&gt; -&gt; Async&lt;TransactionResult&lt;&#39;?7371&gt;&gt;<br />
-                          <strong>Type parameters:</strong> '?7370, '?7371          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L285-285" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '26', 26)" onmouseover="showTip(event, '26', 26)">
-            pickWithResultState state alt
-          </code>
-          <div class="tip" id="26">
-            <strong>Signature:</strong> state:&#39;?7367 -&gt; alt:Alt&lt;&#39;?7367,&#39;?7368&gt; -&gt; Async&lt;TransactionResult&lt;&#39;?7368&gt; * &#39;?7367&gt;<br />
-                          <strong>Type parameters:</strong> '?7367, '?7368          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L273-273" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '27', 27)" onmouseover="showTip(event, '27', 27)">
-            queryB 
-          </code>
-          <div class="tip" id="27">
-            <strong>Signature:</strong> AltQueryBuilder<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L385-385" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '28', 28)" onmouseover="showTip(event, '28', 28)">
-            run procId tran _arg1
-          </code>
-          <div class="tip" id="28">
-            <strong>Signature:</strong> procId:ProcessId -&gt; tran:Transaction&lt;&#39;?7279,&#39;?7280&gt; -&gt; _arg1:Alt&lt;&#39;?7279,&#39;?7280&gt; -&gt; unit<br />
-                          <strong>Type parameters:</strong> '?7279, '?7280          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L25-25" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '29', 29)" onmouseover="showTip(event, '29', 29)">
-            shuffle s
-          </code>
-          <div class="tip" id="29">
-            <strong>Signature:</strong> s:seq&lt;&#39;?7381&gt; -&gt; seq&lt;&#39;?7381&gt;<br />
-                          <strong>Type parameters:</strong> '?7381          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L318-318" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '30', 30)" onmouseover="showTip(event, '30', 30)">
-            some alt
-          </code>
-          <div class="tip" id="30">
-            <strong>Signature:</strong> alt:Alt&lt;&#39;?7349,&#39;?7350&gt; -&gt; Alt&lt;&#39;?7349,&#39;?7350 option&gt;<br />
-                          <strong>Type parameters:</strong> '?7349, '?7350          </div>
+          <div class="tip" id="9">
+            <strong>Signature:</strong> f:(unit -&gt; Async&lt;Alt&lt;&#39;?7334,&#39;?7335&gt;&gt;) -&gt; Alt&lt;&#39;?7334,&#39;?7335&gt;<br />
+                          <strong>Type parameters:</strong> '?7334, '?7335          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L255-255" class="github-link">
@@ -655,15 +316,36 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '31', 31)" onmouseover="showTip(event, '31', 31)">
-            stateOp op
+          <code onmouseout="hideTip(event, '10', 10)" onmouseover="showTip(event, '10', 10)">
+            fromAsync wrkfl
           </code>
-          <div class="tip" id="31">
-            <strong>Signature:</strong> op:(&#39;?7377 -&gt; OpResp&lt;&#39;?7377 * &#39;?7378&gt;) -&gt; Alt&lt;&#39;?7377,&#39;?7378&gt;<br />
-                          <strong>Type parameters:</strong> '?7377, '?7378          </div>
+          <div class="tip" id="10">
+            <strong>Signature:</strong> wrkfl:Async&lt;&#39;r&gt; -&gt; Alt&lt;&#39;s,&#39;r&gt;<br />
+                          <strong>Type parameters:</strong> 'r, 's          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L298-298" class="github-link">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L32-32" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>creates an Alternative from a simple async workflow without onCommit or OnFiledCommit handlers</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '11', 11)" onmouseover="showTip(event, '11', 11)">
+            guard g
+          </code>
+          <div class="tip" id="11">
+            <strong>Signature:</strong> g:Async&lt;Alt&lt;&#39;?7331,&#39;?7332&gt;&gt; -&gt; Alt&lt;&#39;?7331,&#39;?7332&gt;<br />
+                          <strong>Type parameters:</strong> '?7331, '?7332          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L254-254" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
@@ -673,84 +355,12 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '32', 32)" onmouseover="showTip(event, '32', 32)">
-            tranB 
+          <code onmouseout="hideTip(event, '12', 12)" onmouseover="showTip(event, '12', 12)">
+            ife (pred, thenAlt, elseAlt)
           </code>
-          <div class="tip" id="32">
-            <strong>Signature:</strong> TransactionBuilder<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L350-350" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '33', 33)" onmouseover="showTip(event, '33', 33)">
-            tryFinally body compensation
-          </code>
-          <div class="tip" id="33">
-            <strong>Signature:</strong> body:Alt&lt;&#39;?7320,&#39;?7321&gt; -&gt; compensation:(unit -&gt; unit) -&gt; Alt&lt;&#39;?7320,&#39;?7321&gt;<br />
-                          <strong>Type parameters:</strong> '?7320, '?7321          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L163-163" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '34', 34)" onmouseover="showTip(event, '34', 34)">
-            tryWith body compensation
-          </code>
-          <div class="tip" id="34">
-            <strong>Signature:</strong> body:Alt&lt;&#39;?7317,&#39;?7318&gt; -&gt; compensation:(Exception -&gt; Alt&lt;&#39;?7317,&#39;?7318&gt;) -&gt; Alt&lt;&#39;?7317,&#39;?7318&gt;<br />
-                          <strong>Type parameters:</strong> '?7317, '?7318          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L146-146" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '35', 35)" onmouseover="showTip(event, '35', 35)">
-            unit ()
-          </code>
-          <div class="tip" id="35">
-            <strong>Signature:</strong> unit -&gt; Alt&lt;&#39;?7303,unit&gt;<br />
-                          <strong>Type parameters:</strong> '?7303          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L135-135" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '36', 36)" onmouseover="showTip(event, '36', 36)">
-            where (alt, f)
-          </code>
-          <div class="tip" id="36">
-            <strong>Signature:</strong> (alt:Alt&lt;&#39;?7352,&#39;?7353&gt; * f:(&#39;?7353 -&gt; bool)) -&gt; Alt&lt;&#39;?7352,&#39;?7353&gt;<br />
-                          <strong>Type parameters:</strong> '?7352, '?7353          </div>
+          <div class="tip" id="12">
+            <strong>Signature:</strong> (pred:Alt&lt;&#39;?7337,bool&gt; * thenAlt:Alt&lt;&#39;?7337,&#39;?7338&gt; * elseAlt:Alt&lt;&#39;?7337,&#39;?7338&gt;) -&gt; Alt&lt;&#39;?7337,&#39;?7338&gt;<br />
+                          <strong>Type parameters:</strong> '?7337, '?7338          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L257-257" class="github-link">
@@ -763,73 +373,538 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '37', 37)" onmouseover="showTip(event, '37', 37)">
-            whileLoop guard body
+          <code onmouseout="hideTip(event, '13', 13)" onmouseover="showTip(event, '13', 13)">
+            isMutatesState _arg1
           </code>
-          <div class="tip" id="37">
-            <strong>Signature:</strong> guard:(unit -&gt; bool) -&gt; body:Alt&lt;&#39;?7314,&#39;?7315&gt; -&gt; Alt&lt;&#39;?7314,unit&gt;<br />
-                          <strong>Type parameters:</strong> '?7314, '?7315          </div>
+          <div class="tip" id="13">
+            <strong>Signature:</strong> _arg1:Alt&lt;&#39;?7264,&#39;?7265&gt; -&gt; IsMutatesState<br />
+                          <strong>Type parameters:</strong> '?7264, '?7265          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L19-19" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>checks is current transaction can mutate state</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '14', 14)" onmouseover="showTip(event, '14', 14)">
+            isMutatesState2 (arg1, arg2)
+          </code>
+          <div class="tip" id="14">
+            <strong>Signature:</strong> (Alt&lt;&#39;?7267,&#39;?7268&gt; * Alt&lt;&#39;?7269,&#39;?7270&gt;) -&gt; bool<br />
+                          <strong>Type parameters:</strong> '?7267, '?7268, '?7269, '?7270          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L21-21" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>checks is any of transactions can mutate state</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '15', 15)" onmouseover="showTip(event, '15', 15)">
+            map (alt, f)
+          </code>
+          <div class="tip" id="15">
+            <strong>Signature:</strong> (alt:Alt&lt;&#39;?7301,&#39;?7302&gt; * f:(&#39;?7302 -&gt; &#39;?7303)) -&gt; Alt&lt;&#39;?7301,&#39;?7303&gt;<br />
+                          <strong>Type parameters:</strong> '?7301, '?7302, '?7303          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L142-142" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
+          <p>maps a result of an alternative into other alternative</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '16', 16)" onmouseover="showTip(event, '16', 16)">
+            mapSt lens alt
+          </code>
+          <div class="tip" id="16">
+            <strong>Signature:</strong> lens:Lens&lt;&#39;?7367,&#39;?7368&gt; -&gt; alt:Alt&lt;&#39;?7368,&#39;?7369&gt; -&gt; Alt&lt;&#39;?7367,&#39;?7369&gt;<br />
+                          <strong>Type parameters:</strong> '?7367, '?7368, '?7369          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L305-305" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>map state</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '17', 17)" onmouseover="showTip(event, '17', 17)">
+            merge (one, two)
+          </code>
+          <div class="tip" id="17">
+            <strong>Signature:</strong> (one:Alt&lt;&#39;s,&#39;a&gt; * two:Alt&lt;&#39;s,&#39;b&gt;) -&gt; Alt&lt;&#39;s,(&#39;a * &#39;b)&gt;<br />
+                          <strong>Type parameters:</strong> 's, 'a, 'b          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L183-183" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>merges two alternatives into single one which returns both results as a tuple</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '18', 18)" onmouseover="showTip(event, '18', 18)">
+            mergeB 
+          </code>
+          <div class="tip" id="18">
+            <strong>Signature:</strong> MergeBuilder<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L377-377" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
           
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '19', 19)" onmouseover="showTip(event, '19', 19)">
+            mergeChoose (one, two)
+          </code>
+          <div class="tip" id="19">
+            <strong>Signature:</strong> (one:Alt&lt;&#39;s,&#39;r&gt; * two:Alt&lt;&#39;s,&#39;r2&gt;) -&gt; Alt&lt;&#39;s,(&#39;r * &#39;r2)&gt;<br />
+                          <strong>Type parameters:</strong> 's, 'r, 'r2          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L179-179" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>merges two computations in differnet ways to find a way to execute them without blocking</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '20', 20)" onmouseover="showTip(event, '20', 20)">
+            mergeChooseXs xs
+          </code>
+          <div class="tip" id="20">
+            <strong>Signature:</strong> xs:seq&lt;Alt&lt;&#39;s,&#39;r&gt;&gt; -&gt; Alt&lt;&#39;s,seq&lt;&#39;r&gt;&gt;<br />
+                          <strong>Type parameters:</strong> 's, 'r          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L282-282" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>reduces seq of altrnatives with mergeChoose</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '21', 21)" onmouseover="showTip(event, '21', 21)">
+            mergeXs xs
+          </code>
+          <div class="tip" id="21">
+            <strong>Signature:</strong> xs:seq&lt;Alt&lt;&#39;s,&#39;r&gt;&gt; -&gt; Alt&lt;&#39;s,seq&lt;&#39;r&gt;&gt;<br />
+                          <strong>Type parameters:</strong> 's, 'r          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L277-277" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>reduces seq of altrnatives with merge</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '22', 22)" onmouseover="showTip(event, '22', 22)">
+            never ()
+          </code>
+          <div class="tip" id="22">
+            <strong>Signature:</strong> unit -&gt; Alt&lt;&#39;?7305,&#39;?7306&gt;<br />
+                          <strong>Type parameters:</strong> '?7305, '?7306          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L144-144" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>never commits success</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '23', 23)" onmouseover="showTip(event, '23', 23)">
+            none ()
+          </code>
+          <div class="tip" id="23">
+            <strong>Signature:</strong> unit -&gt; Alt&lt;&#39;?7340,&#39;?7341 option&gt;<br />
+                          <strong>Type parameters:</strong> '?7340, '?7341          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L263-263" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>returns alternative which returns None</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '24', 24)" onmouseover="showTip(event, '24', 24)">
+            pick state alt
+          </code>
+          <div class="tip" id="24">
+            <strong>Signature:</strong> state:&#39;?7364 -&gt; alt:Alt&lt;&#39;?7364,&#39;?7365&gt; -&gt; Async&lt;TransactionResult&lt;&#39;?7365&gt;&gt;<br />
+                          <strong>Type parameters:</strong> '?7364, '?7365          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L299-299" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>run altrnative and return result as an promise</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '25', 25)" onmouseover="showTip(event, '25', 25)">
+            pickWithResultState state alt
+          </code>
+          <div class="tip" id="25">
+            <strong>Signature:</strong> state:&#39;?7361 -&gt; alt:Alt&lt;&#39;?7361,&#39;?7362&gt; -&gt; Async&lt;TransactionResult&lt;&#39;?7362&gt; * &#39;?7361&gt;<br />
+                          <strong>Type parameters:</strong> '?7361, '?7362          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L287-287" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>run altrnative and return result as an promise which will return result with a resulting state</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '26', 26)" onmouseover="showTip(event, '26', 26)">
+            queryB 
+          </code>
+          <div class="tip" id="26">
+            <strong>Signature:</strong> AltQueryBuilder<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L400-400" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '27', 27)" onmouseover="showTip(event, '27', 27)">
+            run procId tran _arg1
+          </code>
+          <div class="tip" id="27">
+            <strong>Signature:</strong> procId:ProcessId -&gt; tran:Transaction&lt;&#39;?7277,&#39;?7278&gt; -&gt; _arg1:Alt&lt;&#39;?7277,&#39;?7278&gt; -&gt; unit<br />
+                          <strong>Type parameters:</strong> '?7277, '?7278          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L30-30" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>run given computation in a given transaction asynchronously</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '28', 28)" onmouseover="showTip(event, '28', 28)">
+            shuffle s
+          </code>
+          <div class="tip" id="28">
+            <strong>Signature:</strong> s:seq&lt;&#39;?7375&gt; -&gt; seq&lt;&#39;?7375&gt;<br />
+                          <strong>Type parameters:</strong> '?7375          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L333-333" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>randomly shuffle seq of alternatives</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '29', 29)" onmouseover="showTip(event, '29', 29)">
+            some alt
+          </code>
+          <div class="tip" id="29">
+            <strong>Signature:</strong> alt:Alt&lt;&#39;?7343,&#39;?7344&gt; -&gt; Alt&lt;&#39;?7343,&#39;?7344 option&gt;<br />
+                          <strong>Type parameters:</strong> '?7343, '?7344          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L265-265" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>returns alternative which wraps returned result into a Some(v)</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '30', 30)" onmouseover="showTip(event, '30', 30)">
+            stateOp op
+          </code>
+          <div class="tip" id="30">
+            <strong>Signature:</strong> op:(&#39;?7371 -&gt; OpResp&lt;&#39;?7371 * &#39;?7372&gt;) -&gt; Alt&lt;&#39;?7371,&#39;?7372&gt;<br />
+                          <strong>Type parameters:</strong> '?7371, '?7372          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L312-312" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>alternative for a state operation execution</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '31', 31)" onmouseover="showTip(event, '31', 31)">
+            tranB 
+          </code>
+          <div class="tip" id="31">
+            <strong>Signature:</strong> TransactionBuilder<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L365-365" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '32', 32)" onmouseover="showTip(event, '32', 32)">
+            tryFinally body compensation
+          </code>
+          <div class="tip" id="32">
+            <strong>Signature:</strong> body:Alt&lt;&#39;?7314,&#39;?7315&gt; -&gt; compensation:(unit -&gt; unit) -&gt; Alt&lt;&#39;?7314,&#39;?7315&gt;<br />
+                          <strong>Type parameters:</strong> '?7314, '?7315          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L170-170" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>try finally alternative for builder</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '33', 33)" onmouseover="showTip(event, '33', 33)">
+            tryWith body compensation
+          </code>
+          <div class="tip" id="33">
+            <strong>Signature:</strong> body:Alt&lt;&#39;?7311,&#39;?7312&gt; -&gt; compensation:(Exception -&gt; Alt&lt;&#39;?7311,&#39;?7312&gt;) -&gt; Alt&lt;&#39;?7311,&#39;?7312&gt;<br />
+                          <strong>Type parameters:</strong> '?7311, '?7312          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L153-153" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>try with alternative for builder</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '34', 34)" onmouseover="showTip(event, '34', 34)">
+            unit ()
+          </code>
+          <div class="tip" id="34">
+            <strong>Signature:</strong> unit -&gt; Alt&lt;&#39;?7299,unit&gt;<br />
+                          <strong>Type parameters:</strong> '?7299          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L140-140" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>always commits success with unit</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '35', 35)" onmouseover="showTip(event, '35', 35)">
+            where (alt, f)
+          </code>
+          <div class="tip" id="35">
+            <strong>Signature:</strong> (alt:Alt&lt;&#39;?7346,&#39;?7347&gt; * f:(&#39;?7347 -&gt; bool)) -&gt; Alt&lt;&#39;?7346,&#39;?7347&gt;<br />
+                          <strong>Type parameters:</strong> '?7346, '?7347          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L267-267" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>commits result only if alt commits a value which is f(value) = true</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '36', 36)" onmouseover="showTip(event, '36', 36)">
+            whileLoop guard body
+          </code>
+          <div class="tip" id="36">
+            <strong>Signature:</strong> guard:(unit -&gt; bool) -&gt; body:Alt&lt;&#39;?7308,&#39;?7309&gt; -&gt; Alt&lt;&#39;?7308,unit&gt;<br />
+                          <strong>Type parameters:</strong> '?7308, '?7309          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L149-149" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>whileLoop alternaive for builder</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '37', 37)" onmouseover="showTip(event, '37', 37)">
+            withAck builder
+          </code>
+          <div class="tip" id="37">
+            <strong>Signature:</strong> builder:(Alt&lt;&#39;s,bool&gt; -&gt; Async&lt;Alt&lt;&#39;s,&#39;r&gt;&gt;) -&gt; Alt&lt;&#39;s,&#39;r&gt;<br />
+                          <strong>Type parameters:</strong> 's, 'r          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L230-230" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>uses a alternative builder function for alternative creation with specified handlers on commit or commit failure</p>
+
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '38', 38)" onmouseover="showTip(event, '38', 38)">
-            withAck builder
-          </code>
-          <div class="tip" id="38">
-            <strong>Signature:</strong> builder:(Alt&lt;&#39;s,bool&gt; -&gt; Async&lt;Alt&lt;&#39;s,&#39;r&gt;&gt;) -&gt; Alt&lt;&#39;s,&#39;r&gt;<br />
-                          <strong>Type parameters:</strong> 's, 'r          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L223-223" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '39', 39)" onmouseover="showTip(event, '39', 39)">
             wrap (alt, f)
           </code>
-          <div class="tip" id="39">
-            <strong>Signature:</strong> (alt:Alt&lt;&#39;?7334,&#39;?7335&gt; * f:(TransactionResult&lt;&#39;?7335&gt; -&gt; unit)) -&gt; Alt&lt;&#39;?7334,&#39;?7335&gt;<br />
-                          <strong>Type parameters:</strong> '?7334, '?7335          </div>
+          <div class="tip" id="38">
+            <strong>Signature:</strong> (alt:Alt&lt;&#39;?7328,&#39;?7329&gt; * f:(TransactionResult&lt;&#39;?7329&gt; -&gt; unit)) -&gt; Alt&lt;&#39;?7328,&#39;?7329&gt;<br />
+                          <strong>Type parameters:</strong> '?7328, '?7329          </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L236-236" class="github-link">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L243-243" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
+          <p>attahes an on success handler</p>
 
-          <code onmouseout="hideTip(event, '40', 40)" onmouseover="showTip(event, '40', 40)">
-            zero ()
-          </code>
-          <div class="tip" id="40">
-            <strong>Signature:</strong> unit -&gt; Promise&lt;&#39;?7305&gt;<br />
-                          <strong>Type parameters:</strong> '?7305          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Alternatives.fs#L136-136" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
+
+
         </td>
       </tr>
     </tbody>

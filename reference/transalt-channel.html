@@ -37,6 +37,9 @@
 
 <h1>Channel</h1>
 <div class="xmldoc">
+<p>Channels related stuff</p>
+
+
 </div>
 
 <!-- Render nested types and modules, if there are any -->
@@ -57,7 +60,10 @@
           <td class="type-name">
             <a href="transalt-channel-channel-1.html">Channel<'a></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>represents an immutable FIFO queue</p>
+
+
+</td>
         </tr>
     </tbody>
   </table>
@@ -73,55 +79,64 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '41', 41)" onmouseover="showTip(event, '41', 41)">
+          <code onmouseout="hideTip(event, '39', 39)" onmouseover="showTip(event, '39', 39)">
             create limit name
           </code>
-          <div class="tip" id="41">
-            <strong>Signature:</strong> limit:int option -&gt; name:string -&gt; Channel&lt;&#39;?7221&gt;<br />
-                          <strong>Type parameters:</strong> '?7221          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Channel.fs#L25-25" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '42', 42)" onmouseover="showTip(event, '42', 42)">
-            EmptyBounded limit name
-          </code>
-          <div class="tip" id="42">
-            <strong>Signature:</strong> limit:int -&gt; name:string -&gt; Channel&lt;&#39;?7225&gt;<br />
-                          <strong>Type parameters:</strong> '?7225          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Channel.fs#L27-27" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '43', 43)" onmouseover="showTip(event, '43', 43)">
-            EmptyUnbounded name
-          </code>
-          <div class="tip" id="43">
-            <strong>Signature:</strong> name:string -&gt; Channel&lt;&#39;?7223&gt;<br />
-                          <strong>Type parameters:</strong> '?7223          </div>
+          <div class="tip" id="39">
+            <strong>Signature:</strong> limit:int option -&gt; name:string -&gt; Channel&lt;&#39;?7219&gt;<br />
+                          <strong>Type parameters:</strong> '?7219          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Channel.fs#L26-26" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>creates a queue with an optional size limit</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '40', 40)" onmouseover="showTip(event, '40', 40)">
+            EmptyBounded limit name
+          </code>
+          <div class="tip" id="40">
+            <strong>Signature:</strong> limit:int -&gt; name:string -&gt; Channel&lt;&#39;?7223&gt;<br />
+                          <strong>Type parameters:</strong> '?7223          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Channel.fs#L30-30" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>creates an bounded queue with specified limit</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '41', 41)" onmouseover="showTip(event, '41', 41)">
+            EmptyUnbounded name
+          </code>
+          <div class="tip" id="41">
+            <strong>Signature:</strong> name:string -&gt; Channel&lt;&#39;?7221&gt;<br />
+                          <strong>Type parameters:</strong> '?7221          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Channel.fs#L28-28" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>creates an unbounded queue</p>
+
+
+
         </td>
       </tr>
     </tbody>

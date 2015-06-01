@@ -37,6 +37,9 @@
 
 <h1>State</h1>
 <div class="xmldoc">
+<p>abstractions for State</p>
+
+
 </div>
 
 <!-- Render nested types and modules, if there are any -->
@@ -51,7 +54,10 @@
           <td class="type-name">
             <a href="transalt-state-ismutatesstate.html">IsMutatesState</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>is operation mutates state</p>
+
+
+</td>
         </tr>
         <tr>
           <td class="type-name">
@@ -69,37 +75,55 @@
           <td class="type-name">
             <a href="transalt-state-opresp-1.html">OpResp<'a></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>state operation should return value or Blocked when it could not be executed on current state(like reading from an empty channel)</p>
+
+
+</td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="transalt-state-processid.html">ProcessId</a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>process id. Process identifiier</p>
+
+
+</td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="transalt-state-singlestatekeeper-1.html">SingleStateKeeper<'s></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>simple not thread safe state keeper</p>
+
+
+</td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="transalt-state-statekeeper-1.html">StateKeeper<'s></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>abstract state keeper</p>
+
+
+</td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="transalt-state-stateop-2.html">StateOp<'s, 'r></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>state operation should change state and return OpResp with resulting state and an optional value</p>
+
+
+</td>
         </tr>
         <tr>
           <td class="type-name">
             <a href="transalt-state-stateresp-1.html">StateResp<'a></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>response from state to a client:some result or kill signal when state could not resolve lock</p>
+
+
+</td>
         </tr>
     </tbody>
   </table>

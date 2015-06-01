@@ -37,6 +37,9 @@
 
 <h1>Lens</h1>
 <div class="xmldoc">
+<p>Lens Related combinators</p>
+
+
 </div>
 
 <!-- Render nested types and modules, if there are any -->
@@ -51,7 +54,10 @@
           <td class="type-name">
             <a href="transalt-lens-lens-2.html">Lens<'r, 'a></a>
           </td>
-          <td class="xmldoc"></td>
+          <td class="xmldoc"><p>Lenses are composable functional references. They allow you to access and modify data potentially very deep within a structure!</p>
+
+
+</td>
         </tr>
     </tbody>
   </table>
@@ -67,73 +73,86 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '44', 44)" onmouseover="showTip(event, '44', 44)">
+          <code onmouseout="hideTip(event, '42', 42)" onmouseover="showTip(event, '42', 42)">
             id ()
           </code>
-          <div class="tip" id="44">
-            <strong>Signature:</strong> unit -&gt; Lens&lt;&#39;?7177,&#39;?7177&gt;<br />
-                          <strong>Type parameters:</strong> '?7177          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L5-5" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '45', 45)" onmouseover="showTip(event, '45', 45)">
-            idTyped ()
-          </code>
-          <div class="tip" id="45">
-            <strong>Signature:</strong> unit -&gt; Lens&lt;&#39;s,&#39;s&gt;<br />
-                          <strong>Type parameters:</strong> 's          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L6-6" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '46', 46)" onmouseover="showTip(event, '46', 46)">
-            merge l1 l2
-          </code>
-          <div class="tip" id="46">
-            <strong>Signature:</strong> l1:Lens&lt;&#39;s,&#39;r&gt; -&gt; l2:Lens&lt;&#39;r,&#39;v&gt; -&gt; Lens&lt;&#39;s,&#39;v&gt;<br />
-                          <strong>Type parameters:</strong> 's, 'r, 'v          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L9-9" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '47', 47)" onmouseover="showTip(event, '47', 47)">
-            zip a b
-          </code>
-          <div class="tip" id="47">
-            <strong>Signature:</strong> a:Lens&lt;&#39;?7181,&#39;?7182&gt; -&gt; b:Lens&lt;&#39;?7181,&#39;?7183&gt; -&gt; Lens&lt;&#39;?7181,(&#39;?7182 * &#39;?7183)&gt;<br />
-                          <strong>Type parameters:</strong> '?7181, '?7182, '?7183          </div>
+          <div class="tip" id="42">
+            <strong>Signature:</strong> unit -&gt; Lens&lt;&#39;?7175,&#39;?7175&gt;<br />
+                          <strong>Type parameters:</strong> '?7175          </div>
         </td>
         <td class="xmldoc">
             <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L7-7" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
-          
+          <p>id lens represens get set of object inself</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '43', 43)" onmouseover="showTip(event, '43', 43)">
+            idTyped ()
+          </code>
+          <div class="tip" id="43">
+            <strong>Signature:</strong> unit -&gt; Lens&lt;&#39;s,&#39;s&gt;<br />
+                          <strong>Type parameters:</strong> 's          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L9-9" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>the same as id but with possibility to set a type</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '44', 44)" onmouseover="showTip(event, '44', 44)">
+            merge l1 l2
+          </code>
+          <div class="tip" id="44">
+            <strong>Signature:</strong> l1:Lens&lt;&#39;s,&#39;r&gt; -&gt; l2:Lens&lt;&#39;r,&#39;v&gt; -&gt; Lens&lt;&#39;s,&#39;v&gt;<br />
+                          <strong>Type parameters:</strong> 's, 'r, 'v          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L15-15" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>composes together two lenses like we usually do in oop obj.getter1.getter2</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '45', 45)" onmouseover="showTip(event, '45', 45)">
+            zip a b
+          </code>
+          <div class="tip" id="45">
+            <strong>Signature:</strong> a:Lens&lt;&#39;?7179,&#39;?7180&gt; -&gt; b:Lens&lt;&#39;?7179,&#39;?7181&gt; -&gt; Lens&lt;&#39;?7179,(&#39;?7180 * &#39;?7181)&gt;<br />
+                          <strong>Type parameters:</strong> '?7179, '?7180, '?7181          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/State.fs#L12-12" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>zip two lenses together get will return tuple of both gets 
+and set will set both sets with values from a tuple</p>
+
+
+
         </td>
       </tr>
     </tbody>

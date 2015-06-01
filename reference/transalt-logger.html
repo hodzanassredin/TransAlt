@@ -37,6 +37,9 @@
 
 <h1>Logger</h1>
 <div class="xmldoc">
+<p>Simple logger which works as printfn but is threadsafe</p>
+
+
 </div>
 
 <!-- Render nested types and modules, if there are any -->
@@ -50,69 +53,75 @@
       <tr>
         <td class="member-name">
 
-          <code onmouseout="hideTip(event, '48', 48)" onmouseover="showTip(event, '48', 48)">
+          <code onmouseout="hideTip(event, '46', 46)" onmouseover="showTip(event, '46', 46)">
             agent 
           </code>
-          <div class="tip" id="48">
+          <div class="tip" id="46">
             <strong>Signature:</strong> MailboxProcessor&lt;string * string&gt;<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Logger.fs#L12-12" class="github-link">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Logger.fs#L13-13" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
           
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '47', 47)" onmouseover="showTip(event, '47', 47)">
+            log who msg
+          </code>
+          <div class="tip" id="47">
+            <strong>Signature:</strong> who:string -&gt; msg:string -&gt; unit<br />
+                      </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Logger.fs#L23-23" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>log string</p>
+
+
+
+        </td>
+      </tr>
+      <tr>
+        <td class="member-name">
+
+          <code onmouseout="hideTip(event, '48', 48)" onmouseover="showTip(event, '48', 48)">
+            logf who fmt msg
+          </code>
+          <div class="tip" id="48">
+            <strong>Signature:</strong> who:string -&gt; fmt:StringFormat&lt;(&#39;?7172 -&gt; string)&gt; -&gt; msg:&#39;?7172 -&gt; unit<br />
+                          <strong>Type parameters:</strong> '?7172          </div>
+        </td>
+        <td class="xmldoc">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Logger.fs#L25-25" class="github-link">
+              <img src="../content/img/github.png" class="normal" />
+              <img src="../content/img/github-blue.png" class="hover" />
+            </a>
+          <p>log formatted string</p>
+
+
+
         </td>
       </tr>
       <tr>
         <td class="member-name">
 
           <code onmouseout="hideTip(event, '49', 49)" onmouseover="showTip(event, '49', 49)">
-            log who msg
-          </code>
-          <div class="tip" id="49">
-            <strong>Signature:</strong> who:string -&gt; msg:string -&gt; unit<br />
-                      </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Logger.fs#L21-21" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '50', 50)" onmouseover="showTip(event, '50', 50)">
-            logf who fmt msg
-          </code>
-          <div class="tip" id="50">
-            <strong>Signature:</strong> who:string -&gt; fmt:StringFormat&lt;(&#39;?7174 -&gt; string)&gt; -&gt; msg:&#39;?7174 -&gt; unit<br />
-                          <strong>Type parameters:</strong> '?7174          </div>
-        </td>
-        <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Logger.fs#L22-22" class="github-link">
-              <img src="../content/img/github.png" class="normal" />
-              <img src="../content/img/github-blue.png" class="hover" />
-            </a>
-          
-        </td>
-      </tr>
-      <tr>
-        <td class="member-name">
-
-          <code onmouseout="hideTip(event, '51', 51)" onmouseover="showTip(event, '51', 51)">
             skip 
           </code>
-          <div class="tip" id="51">
+          <div class="tip" id="49">
             <strong>Signature:</strong> string list<br />
                       </div>
         </td>
         <td class="xmldoc">
-            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Logger.fs#L4-4" class="github-link">
+            <a href="http://github.com/hodzanassredin/TransAlt/tree/master/src/TransAlt/Logger.fs#L5-5" class="github-link">
               <img src="../content/img/github.png" class="normal" />
               <img src="../content/img/github-blue.png" class="hover" />
             </a>
