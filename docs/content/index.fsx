@@ -28,8 +28,53 @@ This example demonstrates using a function defined in this sample library.
 #r "TransAlt/TransAlt.dll"
 open TransAlt
 open Alt
+open Channel
+open Lens
+open System.Threading
+type DeadlockSt =
+    { get1C: Channel<unit>; 
+      get2C: Channel<unit>;}
 
-Alt.choose(always(1), always(2)) |> Alt.pick () |> Async.RunSynchronously
+    static member get1 =
+        { get = fun r -> r.get1C; 
+          set = fun (r,v) -> { r with get1C = v }}
+
+    static member get2 =
+        { get = fun r -> r.get2C; 
+          set = fun (r,v) -> { r with get2C = v }}
+
+let deadlockSt = {get1C = EmptyUnbounded "get1C"
+                  get2C = EmptyUnbounded "get2C"} 
+
+let task1 =   tranB{
+        let! x = DeadlockSt.get1.deq()
+        do! after 100 ()
+        let! y = DeadlockSt.get2.deq()
+        do! DeadlockSt.get1.enq()
+        do! DeadlockSt.get2.enq()
+        return ()
+    }
+let task2 =  tranB{
+        let! x = DeadlockSt.get2.deq()
+        do! after 100 ()
+        let! y = DeadlockSt.get1.deq()
+        do! DeadlockSt.get1.enq()
+        do! DeadlockSt.get2.enq()
+        return ()
+    }
+let task3 = tranB{
+        do! DeadlockSt.get1.enq()
+        do! DeadlockSt.get2.enq()
+        return ()
+    }
+//lock detection
+mergeB{
+    case task1
+    case task2
+    case task3
+} |> pickWithResultState deadlockSt |> Async.RunSynchronously |> printfn "%A"
+//lock resolution
+mergeChooseXs[task1;task2;task3] |> pickWithResultState deadlockSt |> Async.RunSynchronously |> printfn "%A"
 
 (**
 Some more info
