@@ -18,8 +18,7 @@ main combinators are:
 #Builders
 Library defines several builder which will help you to compose complex computations. 
 
-from [joinads sample](https://github.com/tpetricek/FSharp.Joinads/blob/master/README.markdown)
-
+Deadlock detection
 *)
 #r "TransAlt/TransAlt.dll"
 open TransAlt
@@ -27,7 +26,53 @@ open Alt
 open Channel
 open Lens
 open System.Threading
+type DeadlockSt =
+    { get1C: Channel<unit>; 
+      get2C: Channel<unit>;}
 
+    static member get1 =
+        { get = fun r -> r.get1C; 
+          set = fun (r,v) -> { r with get1C = v }}
+
+    static member get2 =
+        { get = fun r -> r.get2C; 
+          set = fun (r,v) -> { r with get2C = v }}
+
+let deadlockSt = {get1C = EmptyUnbounded "get1C"
+                  get2C = EmptyUnbounded "get2C"} 
+
+let task1 =   tranB{
+        let! x = DeadlockSt.get1.deq()
+        do! after 100 ()
+        let! y = DeadlockSt.get2.deq()
+        do! DeadlockSt.get1.enq()
+        do! DeadlockSt.get2.enq()
+        return ()
+    }
+let task2 =  tranB{
+        let! x = DeadlockSt.get2.deq()
+        do! after 100 ()
+        let! y = DeadlockSt.get1.deq()
+        do! DeadlockSt.get1.enq()
+        do! DeadlockSt.get2.enq()
+        return ()
+    }
+let task3 = tranB{
+        do! DeadlockSt.get1.enq()
+        do! DeadlockSt.get2.enq()
+        return ()
+    }
+//lock detection
+mergeB{
+    case task1
+    case task2
+    case task3
+} |> pickWithResultState deadlockSt |> Async.RunSynchronously |> printfn "%A"
+//lock resolution
+mergeChooseXs[task1;task2;task3] |> pickWithResultState deadlockSt |> Async.RunSynchronously |> printfn "%A"
+(**
+from [joinads sample](https://github.com/tpetricek/FSharp.Joinads/blob/master/README.markdown)
+*)
 type St2 =
     { putStringC: Channel<string>; 
       putIntC: Channel<int>; 
@@ -79,7 +124,8 @@ mergeB{
     case put5
     case (whileOk getPut)
     case (whileOk getEcho)
-} |> pickWithResultState state |> Async.RunSynchronously
+} |> pickWithResultState state |> Async.RunSynchronously |> printfn "%A"
+
 (**
 async cancellation from [hopac samples](https://github.com/Hopac/Hopac/blob/master/Docs/Alternatives.md)
 *)
@@ -101,8 +147,8 @@ let wrkfl = async{
     do! Async.Sleep(1000)
     return "async finished"
 }
-(asyncWitchCancellation wrkfl, always "always finished") |> choose |> pick () |> Async.RunSynchronously
-(asyncWitchCancellation wrkfl, never()) |> choose |> pick () |> Async.RunSynchronously
+(asyncWitchCancellation wrkfl, always "always finished") |> choose |> pick () |> Async.RunSynchronously |> printfn "%A"
+(asyncWitchCancellation wrkfl, never()) |> choose |> pick () |> Async.RunSynchronously |> printfn "%A"
 
 (**
 fetcher from [hopac docs](https://github.com/Hopac/Hopac/blob/master/Docs/Alternatives.md)
@@ -139,8 +185,8 @@ let runAll () =
   |> pick ()
   |> Async.RunSynchronously
 
-runFastest()
-runAll()
+runFastest() |> printfn "%A"
+runAll() |> printfn "%A"
 
 (**
 one place buffer from [joinads sample](https://github.com/tpetricek/FSharp.Joinads/blob/master/src/Joins/Samples.fs)
@@ -196,7 +242,7 @@ let got = tranB {
             let! v = St3.get.deq()
             Logger.logf "got" "got: %s" v 
         }
-mergeXs [whileOk got; put; whileOk alts; add_empty] |> pick stateSt3 |> Async.RunSynchronously
+mergeXs [whileOk got; put; whileOk alts; add_empty] |> pick stateSt3 |> Async.RunSynchronously |> printfn "%A"
 (**
 Dinning philosophers from [joinads sample](http://tryjoinads.org/docs/examples/philosophers.html)
 *)
@@ -261,6 +307,5 @@ let hungrySet = tranB{
         do! randomDelay random
 }
 
-mergeXs [whileOk findAndDo;whileOk hungrySet;add_chopsticks] |> pickWithResultState phioSt |> Async.RunSynchronously
-
+mergeXs [whileOk findAndDo;whileOk hungrySet;add_chopsticks] |> pickWithResultState phioSt |> Async.RunSynchronously |> printfn "%A"
 
