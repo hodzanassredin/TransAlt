@@ -13,7 +13,7 @@ This project is a proof of concept implementation of async computation workflows
   <div class="span6">
     <div class="well well-small" id="nuget">
       The TransAlt library can be <a href="https://nuget.org/packages/TransAlt">installed from NuGet</a>:
-      <pre>PM> Install-Package TransAlt</pre>
+      <pre>PM> Install-Package TransAlt -Pre</pre>
     </div>
   </div>
   <div class="span1"></div>
