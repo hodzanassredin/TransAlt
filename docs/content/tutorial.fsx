@@ -4,16 +4,263 @@
 #I "../../bin"
 
 (**
-Introducing your project
+Getting started 
 ========================
 
-Say more
+This is a simple library which allows you to compose your async computations into transactions.
+main combinators are:
+fromASync(async) will wrap any async workflow into Alt object
+pick will run your Alt object with specified state
+withAck allows you to create your Alt object with attached handlers for success/failed commit
+merge(alt1,alt2) will return tule with results of als executed in parallel
+bind(alt1,fn) allow to compose your alt computations
+  
 
 *)
 #r "TransAlt/TransAlt.dll"
 open TransAlt
+open Alt
+open Channel
+open Lens
+open System.Threading
 
-Library.hello 0
+////joinads sample
+type St2 =
+    { putStringC: Channel<string>; 
+      putIntC: Channel<int>; 
+      echoC: Channel<string>}
+
+    static member putString =
+        { get = fun r -> r.putStringC; 
+          set = fun (r,v) -> { r with putStringC = v }}
+
+    static member putInt =
+        { get = fun r -> r.putIntC; 
+          set = fun (r,v) -> { r with putIntC = v }}
+
+    static member echo =
+        { get = fun r -> r.echoC; 
+          set = fun (r,v) -> { r with echoC = v }}
+
+let state = {putStringC = EmptyUnbounded "putStringC"
+             putIntC = EmptyUnbounded "putIntC"
+             echoC = EmptyUnbounded "echoC"} 
+
+let rec whileOk alt = tranB{
+                         do! alt 
+                         return! whileOk alt
+                      } 
+
+let getPutString = tranB{
+    let! v = St2.putString.deq()
+    do! St2.echo.enq(sprintf "Echo %s" v)
+}
+
+let getPutInt = tranB{
+    let! v = St2.putInt.deq()
+    do! St2.echo.enq(sprintf "Echo %d" v)
+}
+
+let getPut = choose(getPutString, getPutInt)
+
+let getEcho = tranB{
+    let! s = St2.echo.deq()
+    Logger.logf "getEcho" "GOT: %A" s
+}
+// Put 5 values to 'putString' and 5 values to 'putInt'
+let put5 =tranB { 
+            for i in [1 .. 5] do
+                Logger.logf "put5" "iter %d" i
+                do! St2.putString.enq(sprintf "Hello %d!" i) 
+                do! St2.putInt.enq(i)} 
+mergeB{
+    case put5
+    case (whileOk getPut)
+    case (whileOk getEcho)
+} |> pickWithResultState state |> Async.RunSynchronously
 (**
-Some more info
+async cancellation
 *)
+//async cancellation
+let asyncWitchCancellation wrkfl =
+    withAck(fun nack -> async{
+        let cts = new CancellationTokenSource()
+        let wrkfl, res = Promise.wrapWrkfl(wrkfl)
+        Async.Start(wrkfl, cts.Token)
+        let nack = map(nack, fun commited ->  
+                                    if not commited then printfn "async cancelled"
+                                                         cts.Cancel())
+        async{
+            let! _ = pick () nack
+            return () 
+        } |> Async.Start
+        return fromAsync res
+    })
+let wrkfl = async{
+    do! Async.Sleep(1000)
+    return "async finished"
+}
+(asyncWitchCancellation wrkfl, always "always finished") |> choose |> pick () |> Async.RunSynchronously
+(asyncWitchCancellation wrkfl, never()) |> choose |> pick () |> Async.RunSynchronously
+
+(**
+fetcher
+*)
+open Microsoft.FSharp.Control.WebExtensions
+open System.Net
+open System
+
+let fetchAsync (name, url:string) = async { 
+  let uri = new System.Uri(url)
+  let webClient = new WebClient()
+  let! html = webClient.AsyncDownloadString(uri)
+  return sprintf "Read %d characters for %s" html.Length name
+}
+
+let fetchAlt (name, url) : Alt<'s,string> =
+  fetchAsync (name, url) |> asyncWitchCancellation
+
+let urlList = [ "Microsoft.com", "http://www.microsoft.com/" 
+                "MSDN", "http://msdn.microsoft.com/" 
+                "Bing", "http://www.bing.com" ]
+
+let runFastest () =
+  urlList
+  |> Seq.map fetchAlt
+  |> chooseXs
+  |> pick ()
+  |> Async.RunSynchronously
+
+let runAll () =
+  urlList
+  |> Seq.map fetchAlt
+  |> mergeXs
+  |> pick ()
+  |> Async.RunSynchronously
+
+runFastest()
+runAll()
+
+(**
+one place buffer
+*)
+type St3 =
+    { putC: Channel<string>; 
+      getC: Channel<string>; 
+      emptyC: Channel<unit>; 
+      containsC: Channel<string>}
+
+    static member put =
+        { get = fun r -> r.putC; 
+          set = fun (r,v) -> { r with putC = v }}
+
+    static member get =
+        { get = fun r -> r.getC; 
+          set = fun (r,v) -> { r with getC = v }}
+
+    static member empty =
+        { get = fun r -> r.emptyC; 
+          set = fun (r,v) -> { r with emptyC = v }}
+
+    static member contains =
+        { get = fun r -> r.containsC; 
+          set = fun (r,v) -> { r with containsC = v }}
+
+let stateSt3 = { putC = EmptyUnbounded "putC"
+                 getC = EmptyUnbounded "getC"
+                 emptyC = EmptyUnbounded "emptyC"
+                 containsC = EmptyUnbounded "containsC"}
+let add_empty = St3.empty.enq ()
+let alts = chooseB{
+    case (tranB{
+        do! St3.empty.deq()
+        let! x = St3.put.deq()
+        do! St3.contains.enq(x) 
+    })
+    case (tranB{
+        let! v = St3.contains.deq()
+        do! St3.get.enq(v) 
+        do! St3.empty.enq()
+    })} 
+
+let put = tranB { 
+        do! fromAsync <| Async.Sleep 1000
+        for i in 0 .. 10 do
+          Logger.logf "put" "putting: %d" i
+          do! St3.put.enq(string i) 
+          do! fromAsync <| Async.Sleep 500 }
+
+let got = tranB { 
+            do! fromAsync <| Async.Sleep 250
+            let! v = St3.get.deq()
+            Logger.logf "got" "got: %s" v 
+        }
+mergeXs [whileOk got; put; whileOk alts; add_empty] |> pick stateSt3 |> Async.RunSynchronously
+(**
+Dinning philosophers
+*)
+let n = 5
+let mapReplace k v map =
+    let r = Map.remove k map
+    Map.add k v r
+
+type St4 =
+    { chopsticksCs: Map<int,Channel<unit>>; 
+      hungryC: Map<int,Channel<unit>>;}
+
+    static member chopsticks i =
+        { get = fun r -> Logger.logf "philosophers" "getting chopsticksCs %d " i
+                         r.chopsticksCs.[i]; 
+          set = fun (r,v) -> {r with chopsticksCs = mapReplace i v r.chopsticksCs}}
+                             
+    static member hungry i =
+        { get = fun r -> Logger.logf "philosophers" "getting hungry %d " i
+                         r.hungryC.[i]; 
+          set = fun (r,v) -> {r with hungryC = mapReplace i v r.hungryC}}
+
+let phioSt = {chopsticksCs = [ for i = 1 to n do yield i, EmptyUnbounded("chopsticksCs")] |> Map.ofList
+              hungryC = [ for i = 1 to n do yield i, EmptyBounded 1 "hungryC" ] |> Map.ofList}
+
+let philosophers = [| "Plato"; "Konfuzius"; "Socrates"; "Voltaire"; "Descartes" |]
+
+let randomDelay (r : Random) = Async.Sleep(r.Next(1, 3) * 1000) |> fromAsync
+
+let queries = Array.ofSeq (seq{
+                            for i = 1 to n do
+                                Logger.logf "philosophers" "left %d " i
+                                let left = St4.chopsticks i
+                                Logger.logf "philosophers" "left %d "(i % n + 1)
+                                let right = St4.chopsticks (i % n + 1)
+                                let random = new Random()
+                                //yield merge(always(i,random,left,right),merge(ChEx.altGet (St4.hungry i), merge(ChEx.altGet left, ChEx.altGet right)))
+                                yield queryB{
+                                    for _,_,_ in ((St4.hungry i).deq(), left.deq(), right.deq()) do
+                                    select(i,random,left,right)
+                                }
+                          }) 
+let findAndDo = tranB{
+                    let! i,random,left,right = chooseXs(queries)
+                    Logger.logf "philosophers" "%d wins " i
+                    Logger.logf "philosophers" "%s is eating" philosophers.[i-1] 
+                    do! randomDelay random
+                    do! left.enq()  
+                    do! right.enq()  
+                    Logger.logf "philosophers" "%s is thinking" philosophers.[i-1] 
+                    return ()
+                }
+    
+let add_chopsticks = tranB{
+    for i in 1..n do
+        //Logger.logf "philosophers" "adding chopstick %d" i 
+        do! (St4.chopsticks i).enq()
+    }
+let random = new Random()  
+let hungrySet = tranB{  
+        let i = random.Next(1, n)
+        Logger.logf "philosophers" "set hungry %s"  philosophers.[i]
+        do! (St4.hungry i).enq()
+        do! randomDelay random
+}
+
+mergeXs [whileOk findAndDo;whileOk hungrySet;add_chopsticks] |> pickWithResultState phioSt |> Async.RunSynchronously
+
