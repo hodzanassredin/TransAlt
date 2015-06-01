@@ -36,12 +36,15 @@
 <h1><a name="Getting-started" class="anchor" href="#Getting-started">Getting started</a></h1>
 
 <p>This is a simple library which allows you to compose your async computations into transactions.
-main combinators are:
-<em> fromAsync(async) will wrap any async workflow into Alt object
-</em> pick will run your Alt object with specified state
-<em> withAck allows you to create your Alt object with attached handlers for success/failed commit
-</em> merge(alt1,alt2) will return tule with results of als executed in parallel
-* bind(alt1,fn) allow to compose your alt computations</p>
+main combinators are:</p>
+
+<ul>
+<li>fromAsync(async) will wrap any async workflow into Alt object</li>
+<li>pick will run your Alt object with specified state</li>
+<li>withAck allows you to create your Alt object with attached handlers for success/failed commit</li>
+<li>merge(alt1,alt2) will return tule with results of als executed in parallel</li>
+<li>bind(alt1,fn) allow to compose your alt computations</li>
+</ul>
 
 <h1><a name="Builders" class="anchor" href="#Builders">Builders</a></h1>
 
