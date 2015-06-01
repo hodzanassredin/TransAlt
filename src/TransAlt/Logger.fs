@@ -1,4 +1,5 @@
 ﻿namespace TransAlt
+/// Simple logger which works as printfn but is threadsafe
 module Logger = 
     open System
     let skip = [
@@ -18,5 +19,7 @@ module Logger =
                                         return! loop ()
                                 }
                             loop ())
+    ///log string
     let log who msg = agent.Post(who,msg)
+    /// log formatted string
     let logf who fmt msg = agent.Post(who,sprintf fmt msg)

@@ -1,44 +1,66 @@
 ﻿namespace TransAlt
-
+///Lens Related combinators
 module Lens =
+    ///Lenses are composable functional references. They allow you to access and modify data potentially very deep within a structure!
     type Lens<'r,'a> = {get:'r->'a; set:'r * 'a -> 'r}
-    let id() = {get = id;set = fun (r,v) -> v}
+    ///id lens represens get set of object inself
+    let id() = {get = id;set = fun (_,v) -> v}
+    ///the same as id but with possibility to set a type
     let idTyped<'s>() : Lens<'s,'s> = id()
+    ///zip two lenses together get will return tuple of both gets 
+    ///and set will set both sets with values from a tuple
     let zip a b = { get = fun r -> (a.get(r),b.get(r)); 
                     set = fun (r,(av,bv)) -> b.set(a.set(r,av), bv)}
+    ///composes together two lenses like we usually do in oop obj.getter1.getter2
     let merge (l1: Lens<'s,'r>) (l2: Lens<'r,'v>) = 
         { get = l1.get >> l2.get 
           set = fun (s,v) -> let r = l1.get(s)
                              let r2 = l2.set(r,v)
                              let s2 = l1.set(s,r2)  
                              s2}
+///abstractions for State
 module State =
     open System.Collections.Generic
     open System
     open System.Threading
     open Lens
-
+    ///is operation mutates state
     type IsMutatesState = bool
-
+    ///response from state to a client:some result or kill signal when state could not resolve lock
     type StateResp<'a> = | Result of 'a
                          | Die
+    ///state operation should return value or Blocked when it could not be executed on current state(like reading from an empty channel)
     type OpResp<'a> = | NotBlocked of 'a
                       | Blocked
+    ///state operation should change state and return OpResp with resulting state and an optional value 
     type StateOp<'s,'r> = 's -> OpResp<'s *'r>
+    ///process id. Process identifiier 
     type ProcessId = int
+    ///abstract state keeper
     type StateKeeper<'s when 's : not struct> =
+       ///Apply some state operation to a state
        abstract member Apply<'r> : ProcessId * StateOp<'s,'r> -> Async<StateResp<'r>>
+       ///replace current state with another
        abstract member Merge : StateKeeper<'s> -> Async<StateResp<unit>>
+       ///current state
        abstract member Value : 's with get
+       ///initial state
        abstract member InitValue : 's with get
+       ///is state changed 
        abstract member IsNotChanged : bool with get
+       ///stop
        abstract member Stop : unit -> unit
+       ///replace part of state specified by a lens by another state
        abstract member MergeLens : Lens<'s,'r> -> StateKeeper<'r> -> Async<StateResp<unit>>
+       /// is thread safe state keeper
        abstract member IsThreadSafe : bool with get
+       /// get id for a new process
        abstract member GetProcessId : IsMutatesState -> Async<ProcessId>
+       ///process are stopping and signals that process id is not working anymore
        abstract member ReleaseProcessId : ProcessId -> unit
+       ///count of running not blocked processes exclude specifier procId
        abstract member RunningProcsCountExcludeMe : ProcessId -> Async<int>
-
+    /// simple not thread safe state keeper
     type SingleStateKeeper<'s when 's : not struct>(value : 's,name:string) =
         let name = "SingleStateKeeper " + name + " " + Guid.NewGuid().ToString()
         do Logger.log name "starting" 
@@ -70,7 +92,7 @@ module State =
                 member this.GetProcessId mutator = Async.FromContinuations(fun (cont,_,_ )->cont(0))
                 member this.ReleaseProcessId _ = ()
                 member this.RunningProcsCountExcludeMe _ = Async.FromContinuations(fun (cont,_,_)-> cont(0)) 
-    //not finished obj reference problems
+    //state keeper which maps some operations to a part of state
     type MapStateKeeper<'s, 's2 when 's : not struct and 's2 : not struct>(state:StateKeeper<'s>, lens : Lens<'s,'s2>) =
         let initValue = lens.get(state.InitValue)
         interface StateKeeper<'s2> with 
@@ -92,7 +114,7 @@ module State =
                 member this.GetProcessId mutator = state.GetProcessId mutator
                 member this.ReleaseProcessId procId = state.ReleaseProcessId procId
                 member this.RunningProcsCountExcludeMe procId = state.RunningProcsCountExcludeMe procId
-
+    ///thread safe state keeper. works as a server
     type internal StateMessage<'s when 's : not struct> = 
             | Apply of (ProcessId * (StateResp<'s> -> OpResp<'s>)) 
             | Merge of (unit-> bool) * (unit -> unit) * (StateResp<unit> -> unit)

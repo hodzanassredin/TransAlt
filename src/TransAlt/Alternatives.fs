@@ -1,29 +1,34 @@
 namespace TransAlt
-    
+///first class cancellable async operations    
 module Alt =
     open State
     open System
-    open Promise
     type StateChangeOp<'s,'r> = 's -> 's * 'r
+    ///result of a transaction
     type TransactionResult<'r> = | Ok of 'r
                                  | BlockedForever
                                  | Error of Exception
-
+    ///Transaction object represents current transaction state with a function for a result commit
     type Transaction<'s,'r when 's : not struct> = 
                                 {state : StateKeeper<'s>;
                                  commit : TransactionResult<'r> -> Async<bool>}
-    
+    ///first class cancellable transactional async computation
     type Alt<'s,'r when 's : not struct> = 
         Alt of (ProcessId * Transaction<'s,'r> ->  Async<unit>) * IsMutatesState
+    ///checks is current transaction can mutate state
     let isMutatesState =  function | Alt(_,ismut) -> ismut
+    ///checks is any of transactions can mutate state
     let isMutatesState2 =  function | Alt(_,ismut), Alt(_,ismut2) -> ismut || ismut2
+    ///simle async monad return
     let asyncReturn x = Async.FromContinuations(fun (cont,_,_) -> cont(x))
+    ///map ans async result
     let asyncMap wrkfl f = async{
         let! r = wrkfl
         return f(r)
     }
+    ///run given computation in a given transaction asynchronously
     let run procId tran = function | Alt(alt,_) -> alt(procId,tran) |> Async.Start
-    
+    ///creates an Alternative from a simple async workflow without onCommit or OnFiledCommit handlers
     let fromAsync wrkfl =
         Alt((fun (_,tran:Transaction<'s,'r>) ->
             async{
@@ -35,18 +40,16 @@ module Alt =
                               return ()
             }),false
         )
-
-    let asyncAliasing = Async.StartChild
-    type RestartSignal = | Done
+    type private RestartSignal = 
+                         | Done
                          | Restart
                          | ThrowError of exn
                          | ResolveStateProblem
-
+    ///Creates an alternative that is available when any one of the given alternatives is.
     let rec choose<'s,'r when 's : not struct> (one:Alt<'s,'r>, two:Alt<'s,'r>)  =  
         Alt((fun (procId,tran:Transaction<'s,'r>) ->
             async{
                 let commitOnce = Promise.create<unit>()
-                let failSnd = Promise.create<unit>()
                 let readyToRestart1 = Promise.create<RestartSignal>()
                 let readyToRestart2 = Promise.create<RestartSignal>()
                 let parentInitState = tran.state.Value
@@ -110,7 +113,7 @@ module Alt =
                 restarter |> Async.Start
             }),isMutatesState2 (one,two)
         )
-
+    ///bind an alternative to an continuation
     let bind (one:Alt<'s,'a>, f:'a -> Alt<'s,'b>) : Alt<'s,'b> =  
         Alt((fun (procId, tran:Transaction<'s,'b>) ->
             async{
@@ -131,18 +134,22 @@ module Alt =
 
                 run procId {state = tran.state;commit = commit} one 
             }),true)//tod static checking
+    ///always commits success with a given value
     let always v = v |> asyncReturn |> fromAsync
+    ///always commits success with unit
     let unit () = always ()
-    let zero () = never () 
+    ///maps a result of an alternative into other alternative
     let map (alt,f) = bind(alt, fun x -> always(f(x)))
-    let never() = Alt(fun (procId,tran) -> async{
+    ///never commits success
+    let never() = Alt(fun (_,tran) -> async{
         let! _ = tran.commit(TransactionResult.BlockedForever)
         return ()
     }, false)
+    ///whileLoop alternaive for builder
     let rec whileLoop guard body =
         if guard() then bind(body, fun x -> whileLoop guard body)
                         else always () 
-
+    ///try with alternative for builder
     let tryWith body compensation = 
         Alt((fun (procId,tran) ->async{
             let commit v =
@@ -159,7 +166,7 @@ module Alt =
                     | _ -> tran.commit v
             run procId {tran with commit = commit} body 
         }),isMutatesState body)
-
+    ///try finally alternative for builder
     let tryFinally body compensation = 
         Alt((fun (procId,tran) ->async{
             let commit v =
@@ -167,10 +174,12 @@ module Alt =
                 tran.commit(v)
             run procId {tran with commit = commit} body
         }),isMutatesState body)
+
+    ///merges two computations in differnet ways to find a way to execute them without blocking
     let mergeChoose (one:Alt<'s,'r>, two:Alt<'s,'r2>) =  
         choose(bind(one,fun r -> map(two, fun r2 -> r,r2)), 
                bind(two,fun r2 -> map(one, fun r -> r,r2)))
-
+    ///merges two alternatives into single one which returns both results as a tuple
     let merge (one:Alt<'s,'a>, two:Alt<'s,'b>) : Alt<'s, 'a * 'b> =  
         Alt((fun (procId,tran) ->
             async{
@@ -217,9 +226,7 @@ module Alt =
                 bothOk.signal(isCommited) |> ignore
             }),isMutatesState2 (one,two)
         )
-    
-    
-
+    ///uses a alternative builder function for alternative creation with specified handlers on commit or commit failure
     let withAck (builder:Alt<'s, bool> -> Async<Alt<'s,'r>>) =  
         Alt((fun (procId,tran) ->
             async{
@@ -232,7 +239,7 @@ module Alt =
                 let! alt = builder(fromAsync(nack.future))
                 run procId tran alt 
             }), true)
-
+    ///attahes an on success handler
     let wrap (alt,f) =  
         Alt((fun (procId,tran) ->
             async{
@@ -246,30 +253,37 @@ module Alt =
             }), isMutatesState alt)
     let guard g = withAck <| fun _ -> g
     let delay f = guard( async{ return! f()})
-
+    //if else expression for alternatives
     let ife (pred,thenAlt, elseAlt) = 
         bind(pred, fun x ->
                     if x then thenAlt
                     else elseAlt)
-    let none() = always None
-    let some alt = bind(alt, fun x -> always <| Some(x))
 
+    ///returns alternative which returns None
+    let none() = always None
+    ///returns alternative which wraps returned result into a Some(v)
+    let some alt = bind(alt, fun x -> always <| Some(x))
+    ///commits result only if alt commits a value which is f(value) = true
     let where (alt,f) = bind(alt, fun x ->
                             if f(x) then always x
                             else never ())
+    ///commits value after a specified amount of time
     let after ms v = async{
                         do! Async.Sleep(ms)
                         return v} |> fromAsync
-
+    ///reduces seq of altrnatives with choose
     let chooseXs xs = Seq.fold (fun x y -> choose (x,y)) (never()) xs
+    ///reduces seq of altrnatives with merge
     let mergeXs (xs:Alt<'s,'r> seq) : Alt<'s,'r seq> = 
         Seq.fold (fun (x:Alt<'s,'r seq>) (y:Alt<'s,'r>) -> 
             map(merge (x,y), fun (x,y) -> seq{yield y
                                               yield! x})) (always(Seq.empty)) xs
+    ///reduces seq of altrnatives with mergeChoose
     let mergeChooseXs (xs:Alt<'s,'r> seq) : Alt<'s,'r seq> = 
         Seq.fold (fun (x:Alt<'s,'r seq>) (y:Alt<'s,'r>) -> 
             map(mergeChoose (x,y), fun (x,y) -> seq{yield y
                                                     yield! x})) (always(Seq.empty)) xs
+    ///run altrnative and return result as an promise which will return result with a resulting state 
     let pickWithResultState state alt  = 
         let res = Promise.create()
         let stateR = SingleStateKeeper(state, "pick") :> StateKeeper<_>
@@ -281,20 +295,20 @@ module Alt =
                                                     | _ -> false |> asyncReturn}
         run 0 tran alt
         res.future
-
+    ///run altrnative and return result as an promise
     let pick state alt  =
         async{
             let! r,_ = pickWithResultState state alt 
             return r
         }
-
+    ///map state
     let mapSt lens alt =
         Alt((fun (procId,tran) ->async{
             let state = new MapStateKeeper<_,_>(tran.state,lens)
             run procId {commit = tran.commit;state = state} alt 
             return ()
         }), isMutatesState alt)
-
+    ///alternative for a state operation execution
     let stateOp op =
         Alt((fun (procId,tran) ->async{
             let safeOp :StateOp<_,_> =
@@ -315,8 +329,9 @@ module Alt =
         }),true)
 
     let private rand = new System.Random(DateTime.Now.Millisecond)
+    ///randomly shuffle seq of alternatives
     let shuffle s = Seq.sortBy(fun _ -> rand.Next()) s
-
+    ///builder for transactional alternatives
     type TransactionBuilder() =
         member this.Bind(m, f) = bind(m,f)
         member this.Return(x) = always x
@@ -348,19 +363,19 @@ module Alt =
                     this.Delay(fun () -> body enum.Current)))
 
     let tranB = TransactionBuilder() 
-
+    ///nice syntax for choose
     type ChooseBuilder() =
         [<CustomOperation("case")>]
         member this.Case(x,y) = choose(y,x)
         member this.Yield(()) = never()
     let chooseB = ChooseBuilder() 
-
+    ///nice syntax for merge
     type MergeBuilder() =
         [<CustomOperation("case")>]
         member this.Case(x,y) = merge(y,x)
         member this.Yield(()) = always()
     let mergeB = MergeBuilder() 
-
+    ///imitating joinads
     type AltQueryBuilder() =
         member this.Bind(m, f) = bind(m,f)
         member t.Zip(xs,ys) = merge(xs,ys)
