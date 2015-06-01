@@ -45,12 +45,13 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Logger.fs" />
+    <Compile Include="Promise.fs" />
     <Compile Include="State.fs" />
     <Compile Include="Alternatives.fs" />
+    <Compile Include="Channel.fs" />
     <None Include="paket.references" />
     <None Include="paket.template" />
-    <Compile Include="Promise.fs" />
-    <Compile Include="Logger.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

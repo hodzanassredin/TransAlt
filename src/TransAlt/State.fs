@@ -1,5 +1,7 @@
-﻿type Lens<'r,'a> = {get:'r->'a; set:'r * 'a -> 'r}
+﻿namespace TransAlt
+
 module Lens =
+    type Lens<'r,'a> = {get:'r->'a; set:'r * 'a -> 'r}
     let id() = {get = id;set = fun (r,v) -> v}
     let idTyped<'s>() : Lens<'s,'s> = id()
     let zip a b = { get = fun r -> (a.get(r),b.get(r)); 
@@ -11,9 +13,10 @@ module Lens =
                              let s2 = l1.set(s,r2)  
                              s2}
 module State =
-    open System.Collections.Concurrent
     open System.Collections.Generic
     open System
+    open System.Threading
+    open Lens
 
     type IsMutatesState = bool
 
@@ -192,7 +195,6 @@ module State =
                     | Die ->  holder.signal(Die) |> ignore
                               Blocked
 
-            let stopped = new ManualResetEvent(false);
             interface StateKeeper<'s> with 
                 member this.Apply (procId,f) = 
                     let holder = Promise.create<StateResp<'r>>()
