@@ -9,6 +9,7 @@ Getting started
 
 This is a simple library which allows you to compose your async computations into transactions.
 main combinators are:
+
 * fromAsync(async) will wrap any async workflow into Alt object
 * pick will run your Alt object with specified state
 * withAck allows you to create your Alt object with attached handlers for success/failed commit
