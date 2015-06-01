@@ -33,7 +33,7 @@ module Channel =
     [<Extension>]
     type ChEx () =
         [<Extension>]
-        static member inline put(qlens: Lens<'s, Channel<'v>>, x) = 
+        static member inline enq(qlens: Lens<'s, Channel<'v>>, x) = 
             let changeF state = 
                 let ch : Channel<_> = qlens.get state
                 //Logger.logf "AltAdd" "putting to channel %A" (ch,x)
@@ -48,7 +48,7 @@ module Channel =
             stateOp changeF
 
         [<Extension>]
-        static member inline get(qlens: Lens<'s, Channel<'v>>) = 
+        static member inline deq(qlens: Lens<'s, Channel<'v>>) = 
             let changeF state= 
                 let ch : Channel<_> = qlens.get state
                 //Logger.logf "altGet" "changeF getting from channel"

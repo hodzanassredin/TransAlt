@@ -17,10 +17,10 @@ let ignoreAsyncRes w =
 
 let add_nack (alt:Alt<'s,'r>)  = 
         let promise = Promise.create()
-        withAck (fun (nack : Alt<'s, bool>) -> 
-                    let nack = map(nack, fun x -> if not x then promise.signal(x) |> ignore
-                                                  Unchecked.defaultof<'r>)
-                    asyncReturn <| choose(alt,nack)
+        withAck (fun (ack : Alt<'s, bool>) -> 
+                    let ack = map(ack, fun x -> promise.signal(x) |> ignore
+                                                Unchecked.defaultof<'r>)
+                    asyncReturn <| choose(alt,ack)
                     ), promise.future
 
 module Assert =
@@ -35,7 +35,7 @@ module Assert =
             | _ -> Assert.Fail()
     let IsError (msg,res) = 
         match res with
-            | Error(exn) -> Assert.Equals(msg, exn.Message)
+            | Error(exn) -> Assert.Equals(msg, exn.Message) |> ignore
             | _ -> Assert.Fail()
 [<Test>]
 let ``query builder should select final result`` () =
@@ -116,7 +116,7 @@ let ``choose should return first result and nack second`` () =
 let toAlways a alt  = bind(alt,fun  _ -> always(a))
 let wrapToPromise alt = 
     let promise = Promise.create()
-    wrap(alt,fun x -> promise.signal(x) |> ignore), promise.future
+    wrap(alt,fun x -> promise.signal(x) |> ignore), promise.signal
 
 open Lens
 open Channel
@@ -128,32 +128,60 @@ let id_lens = Lens.idTyped<Channel<int>>()
 
 [<Test>]
 let ``alt should return error when something goes wrong on state update`` () =
-    let res, _ = badLens.put 1 |> pickWithResultState St |> test
+    let res, _ = badLens.enq 1 |> pickWithResultState St |> test
     Assert.IsError("lens bug", res) 
 
 [<Test>]
 let ``alt should change state`` () =
-    let res, state = id_lens.put(1) |> pickWithResultState St |> test
+    let res, state = id_lens.enq(1) |> pickWithResultState St |> test
     Assert.IsOk((), res)
     Assert.IsTrue(state.Count = 1)
-    let v, _ = state.Get()
+    let v = state.Get()
     match v with
-        | NotBlocked(v) -> Assert.IsTrue(v = 1)
+        | State.NotBlocked(s,inpEl) -> Assert.Equals(inpEl,1) |> ignore
         | _ -> Assert.Fail()
-    
 
-//ChEx.AltAdd(id_lens, 1) |> pickWithResultState St |> test
-//bind(ChEx.AltAdd(id_lens, 1), fun _ -> ChEx.altGet id_lens) |> pickWithResultState St |> test
-//bind(ChEx.AltAdd(id_lens, 1), fun _ -> ChEx.AltAdd(id_lens, 1)) |> pickWithResultState St |> test
-//ChEx.AltAdd (id_lens, 0) |> wrapPrint |> pickWithResultState St |> test
-//ChEx.altGet id_lens |> wrapPrint |> pickWithResultState St |> test
-//
-//
-//bind(ChEx.altGet id_lens, fun _ -> ChEx.AltAdd(id_lens, 1)) |> pickWithResultState St |> test
-//
-//merge(ChEx.altGet id_lens, ChEx.AltAdd (id_lens, 1))|> pickWithResultState St |> test
-//merge(always(1), always(2))|> pick () |> test
-//
+[<Test>]
+let ``bind should use the same state`` () =
+    let res, _ = bind(id_lens.enq(1), fun _ -> id_lens.deq()) |> pickWithResultState St |> test
+    Assert.IsOk(1, res)
+ 
+[<Test>]
+let ``wrao should be invoked only on success`` () =
+    let first, first_wrap = after 200 200 |> wrapToPromise; 
+    let second, second_wrap = after 300 300 |> wrapToPromise; 
+    let res = choose(first,second) |> pick () |> test
+    Assert.IsOk(200, res)
+    let first_wrap = first_wrap(Ok(1))
+    Assert.IsTrue(first_wrap)
+    let second_wrap = second_wrap(Ok(1))
+    Assert.IsFalse(second_wrap)
+
+[<Test>]
+let ``alt should return blocked result when proccess is blocked`` () =
+    let res, _ = id_lens.deq() |> pickWithResultState St |> test
+    Assert.IsBlockForever(res)
+
+[<Test>]
+let ``alt bind  should return blocked result when proccess is blocked`` () =
+    let res, _ = bind(id_lens.deq(), fun _ -> id_lens.enq(1)) |> pickWithResultState St |> test
+    Assert.IsBlockForever(res)
+
+[<Test>]
+let ``merge should resolve blocked sub task if second sub task could help`` () =
+    let res, _ = Alt.merge(id_lens.deq(), id_lens.enq(1)) |> pickWithResultState St |> test
+    Assert.IsOk((1,()),res)
+
+[<Test>]
+let ``merge should return results form all sub tasks`` () =
+    let res = Alt.merge(always(1), always(2)) |> pick () |> test
+    Assert.IsOk((1,2),res)
+
+[<Test>]
+let ``choose should return not blocked result`` () =
+    let res = Alt.choose(id_lens.enq(1), bind(id_lens.deq(), fun _ -> always())) |> pick St |> test
+    Assert.IsOk((1,2),res)
+
 //[ChEx.AltAdd(id_lens,1)  |> toAlways -1; ChEx.altGet id_lens] |> chooseXs |> pickWithResultState St |> test
 //
 ////joinads samples
