@@ -9,13 +9,16 @@ Getting started
 
 This is a simple library which allows you to compose your async computations into transactions.
 main combinators are:
-fromASync(async) will wrap any async workflow into Alt object
-pick will run your Alt object with specified state
-withAck allows you to create your Alt object with attached handlers for success/failed commit
-merge(alt1,alt2) will return tule with results of als executed in parallel
-bind(alt1,fn) allow to compose your alt computations
-  
-joinads sample
+* fromAsync(async) will wrap any async workflow into Alt object
+* pick will run your Alt object with specified state
+* withAck allows you to create your Alt object with attached handlers for success/failed commit
+* merge(alt1,alt2) will return tule with results of als executed in parallel
+* bind(alt1,fn) allow to compose your alt computations
+
+#Builders
+Library defines several builder which will help you to compose complex computations. 
+
+from [joinads sample](https://github.com/tpetricek/FSharp.Joinads/blob/master/README.markdown)
 
 *)
 #r "TransAlt/TransAlt.dll"
@@ -78,7 +81,7 @@ mergeB{
     case (whileOk getEcho)
 } |> pickWithResultState state |> Async.RunSynchronously
 (**
-async cancellation
+async cancellation from [hopac samples](https://github.com/Hopac/Hopac/blob/master/Docs/Alternatives.md)
 *)
 let asyncWitchCancellation wrkfl =
     withAck(fun nack -> async{
@@ -102,7 +105,7 @@ let wrkfl = async{
 (asyncWitchCancellation wrkfl, never()) |> choose |> pick () |> Async.RunSynchronously
 
 (**
-fetcher
+fetcher from [hopac docs](https://github.com/Hopac/Hopac/blob/master/Docs/Alternatives.md)
 *)
 open Microsoft.FSharp.Control.WebExtensions
 open System.Net
@@ -140,7 +143,7 @@ runFastest()
 runAll()
 
 (**
-one place buffer
+one place buffer from [joinads sample](https://github.com/tpetricek/FSharp.Joinads/blob/master/src/Joins/Samples.fs)
 *)
 type St3 =
     { putC: Channel<string>; 
@@ -195,7 +198,7 @@ let got = tranB {
         }
 mergeXs [whileOk got; put; whileOk alts; add_empty] |> pick stateSt3 |> Async.RunSynchronously
 (**
-Dinning philosophers
+Dinning philosophers from [joinads sample](http://tryjoinads.org/docs/examples/philosophers.html)
 *)
 let n = 5
 let mapReplace k v map =
@@ -259,7 +262,5 @@ let hungrySet = tranB{
 }
 
 mergeXs [whileOk findAndDo;whileOk hungrySet;add_chopsticks] |> pickWithResultState phioSt |> Async.RunSynchronously
-(**
-end
-*)
+
 

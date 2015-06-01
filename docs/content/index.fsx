@@ -6,8 +6,7 @@
 (**
 TransAlt
 ======================
-
-Documentation
+This project is a proof of concept implementation of async computation workflows composition with non determenistic choice, merge and bind based on immutable state with lock detection. Uses ideas from Stm,Hopac,Joinads.
 
 <div class="row">
   <div class="span1"></div>
@@ -30,7 +29,7 @@ This example demonstrates using a function defined in this sample library.
 open TransAlt
 open Alt
 
-Alt.choose(always(1), always(2)) |> Alt.pick ()
+Alt.choose(always(1), always(2)) |> Alt.pick () |> Async.RunSynchronously
 
 (**
 Some more info
