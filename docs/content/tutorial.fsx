@@ -25,7 +25,7 @@ main combinators are:
 * bind(alt<'a>,'a -> Alt<'b>) allow to sequentially compose your alt computations
 
 # How it works
-The main type is Alt it defines some async computation which should commit result or error after execution
+The main type is Alt, it defines some async computation which should commit result or error after execution
 
 *)
 module Alt_ =
@@ -45,7 +45,6 @@ module Alt_ =
             )
 (**
 But commit could be unsuccessful so you could add some handlers for successful/unsuccessful commit.
-For exampl
 *)
     let withAck_ (builder:Alt<'s, bool> -> Async<Alt<'s,'r>>) =  
             Alt((fun (procId,tran) ->
@@ -66,6 +65,22 @@ For exampl
                                 asyncReturn <| choose(Async.Sleep(100) |> fromAsync,ack)
                                 )
 (**
+#State and communication
+If your workflows have to communicate or share some state then you need to create some immutable object which will keep all shared data.
+Currently implemented only support for immutable channels, but it is easy to add your own.
+Lets define a channel and communicate two workflows. Your workflows should not use state mutation like in state monad but delegate change operations to a state keeper.
+So you have to define lenses which dramatically simplify state changes.
+*)
+let St : Channel<int> = EmptyBounded(1) "channel"
+let id_lens = { get = fun r -> r; 
+                set = fun (r,v) -> v}
+Alt.merge(id_lens.enq 1, id_lens.deq ()) |> pickWithResultState St |> Async.RunSynchronously |> printfn "%A"
+
+(**
+Result is (Ok (null, 1), queue(channel []))
+
+Why immutability? Because it is simple to share state between concurrent threads in started by choose combinator and isolate changes from each other.
+ And internally state keeper is able to resolve blocking problems and fstop execution when workflows are deadlocked.
 #Builders
 Library defines several builder which will help you to compose complex computations. 
 
