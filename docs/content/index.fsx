@@ -22,7 +22,7 @@ This project is a proof of concept implementation of async computation workflows
 Example
 -------
 
-This example demonstrates using a function defined in this sample library.
+This example demonstrates lock detection and resolution.
 
 *)
 #r "TransAlt/TransAlt.dll"

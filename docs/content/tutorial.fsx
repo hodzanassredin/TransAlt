@@ -2,6 +2,13 @@
 // This block of code is omitted in the generated HTML documentation. Use 
 // it to define helpers that you do not want to show in the documentation.
 #I "../../bin"
+#r "TransAlt/TransAlt.dll"
+open TransAlt
+open Alt
+open Channel
+open Lens
+open System.Threading
+open State
 
 (**
 Getting started 
@@ -10,24 +17,67 @@ Getting started
 This is a simple library which allows you to compose your async computations into transactions.
 main combinators are:
 
-* fromAsync(async) will wrap any async workflow into Alt object
-* pick will run your Alt object with specified state
-* withAck allows you to create your Alt object with attached handlers for success/failed commit
-* merge(alt1,alt2) will return tule with results of als executed in parallel
-* bind(alt1,fn) allow to compose your alt computations
+* fromAsync(async) will wrap any async workflow into an Alt object
+* pick(state,alt) will run your Alt object with specified state
+* withAck(ackAlt -> alt) allows you to create your Alt object with attached handlers for success/failed commit
+* merge(alt1,alt2) will return tuple with results of alts executed in parallel
+* choose(alt1,alt2) will return commit result only from first non error subcommit, other sub commit will be declined
+* bind(alt<'a>,'a -> Alt<'b>) allow to sequentially compose your alt computations
 
+# How it works
+The main type is Alt it defines some async computation which should commit result or error after execution
+
+*)
+module Alt_ =
+    type Alt_<'s,'r when 's : not struct> = 
+            Alt of (ProcessId * Transaction<'s,'r> ->  Async<unit>) * IsMutatesState
+
+    let fromAsync_ wrkfl =
+            Alt((fun (_,tran:Transaction<'s,'r>) ->
+                async{
+                    try
+                        let! res = wrkfl
+                        let! _ = tran.commit (Ok(res))
+                        return ()
+                    with error -> let! _ = tran.commit (Error(error))
+                                  return ()
+                }),false
+            )
+(**
+But commit could be unsuccessful so you could add some handlers for successful/unsuccessful commit.
+For exampl
+*)
+    let withAck_ (builder:Alt<'s, bool> -> Async<Alt<'s,'r>>) =  
+            Alt((fun (procId,tran) ->
+                async{
+                    let nack = Promise.create<bool>()
+                    let commit res = async{
+                        let! commited = tran.commit res
+                        nack.signal(commited) |> ignore
+                        return commited}
+                    let tran = {commit = commit; state = tran.state}
+                    let! alt = builder(fromAsync(nack.future))
+                    run procId tran alt 
+                }), true)
+    let altWithNack = withAck (fun (ack : Alt<unit, bool>) -> 
+                                let ack = map(ack, fun x -> if x then printfn "do commit"
+                                                            else printfn "do rollback"
+                                                            ())
+                                asyncReturn <| choose(Async.Sleep(100) |> fromAsync,ack)
+                                )
+(**
 #Builders
 Library defines several builder which will help you to compose complex computations. 
+
+* transB monadic builder
+* mergeB syntactic sugar for merge function
+* chooseB syntactic sugar for choose function
+* queryB inspired by joinads match
 
 #Samples
 from [joinads sample](https://github.com/tpetricek/FSharp.Joinads/blob/master/README.markdown)
 *)
-#r "TransAlt/TransAlt.dll"
-open TransAlt
-open Alt
-open Channel
-open Lens
-open System.Threading
+
 type St2 =
     { putStringC: Channel<string>; 
       putIntC: Channel<int>; 
@@ -264,3 +314,6 @@ let hungrySet = tranB{
 
 mergeXs [whileOk findAndDo;whileOk hungrySet;add_chopsticks] |> pickWithResultState phioSt |> Async.RunSynchronously |> printfn "%A"
 
+(**
+More examples in [tests](https://github.com/hodzanassredin/TransAlt/blob/master/tests/TransAlt.Tests/Tests.fs)
+*)
