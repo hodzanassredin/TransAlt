@@ -79,8 +79,8 @@ Alt.merge(id_lens.enq 1, id_lens.deq ()) |> pickWithResultState St |> Async.RunS
 (**
 Result is (Ok (null, 1), queue(channel []))
 
-Why immutability? Because it is simple to share state between concurrent threads in started by choose combinator and isolate changes from each other.
- And internally state keeper is able to resolve blocking problems and fstop execution when workflows are deadlocked.
+Why immutability? Because it is simple to share state between concurrent threads started by choose combinator and isolate changes from each other.
+ And internally state keeper is able to resolve blocking problems and stop execution when workflows are deadlocked.
 #Builders
 Library defines several builder which will help you to compose complex computations. 
 
