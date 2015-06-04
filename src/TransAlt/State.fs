@@ -32,6 +32,7 @@ module State =
     ///state operation should return value or Blocked when it could not be executed on current state(like reading from an empty channel)
     type OpResp<'a> = | NotBlocked of 'a
                       | Blocked
+                      | Error of exn
     ///state operation should change state and return OpResp with resulting state and an optional value 
     type StateOp<'s,'r> = 's -> OpResp<'s *'r>
     ///process id. Process identifiier 
@@ -144,6 +145,7 @@ module State =
                                             None
                             | Blocked -> //Logger.log name "State: blocked on apply adding to a waiting list"
                                          Some(f,count + 1)
+                            | Error(_) -> None
             let rec checkIdle () =
                 //Logger.log name "proccessing idle queue"
                 let mutable resolved = false
