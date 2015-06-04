@@ -3,116 +3,100 @@ namespace TransAlt
 module Alt =
     open State
     open System
+
+    //simle async monad return
+    let asyncReturn x = Async.FromContinuations(fun (cont,_,_) -> cont(x))
+
     type StateChangeOp<'s,'r> = 's -> 's * 'r
     ///result of a transaction
-    type TransactionResult<'r> = | Ok of 'r
-                                 | BlockedForever
-                                 | Error of Exception
-    ///Transaction object represents current transaction state with a function for a result commit
-    type Transaction<'s,'r when 's : not struct> = 
-                                {state : StateKeeper<'s>;
-                                 commit : TransactionResult<'r> -> Async<bool>}
+    type Result<'r> = | Ok of 'r
+                      | BlockedForever
+    type CommitHandler = bool -> Async<unit>       
+
+    let emptyHandler : CommitHandler= fun _ -> asyncReturn ()        
+    let rec mergeHandlers handls  : CommitHandler = 
+            fun res -> async{
+                for handler in handls do
+                    do! handler(res)
+                }
+               
     ///first class cancellable transactional async computation
     type Alt<'s,'r when 's : not struct> = 
-        Alt of (ProcessId * Transaction<'s,'r> ->  Async<unit>) * IsMutatesState
-    ///checks is current transaction can mutate state
-    let isMutatesState =  function | Alt(_,ismut) -> ismut
+        {
+            run : ProcessId * StateKeeper<'s>->Async<Result<'r>> 
+            IsMutatesState : bool
+            onCommit : CommitHandler
+        }
     ///checks is any of transactions can mutate state
-    let isMutatesState2 =  function | Alt(_,ismut), Alt(_,ismut2) -> ismut || ismut2
-    ///simle async monad return
-    let asyncReturn x = Async.FromContinuations(fun (cont,_,_) -> cont(x))
+    let anyMutatesState alts = 
+        alts |> Seq.exists(fun x -> x.IsMutatesState)
+
     ///map ans async result
     let asyncMap wrkfl f = async{
         let! r = wrkfl
         return f(r)
     }
     ///run given computation in a given transaction asynchronously
-    let run procId tran = function | Alt(alt,_) -> alt(procId,tran) |> Async.Start
     ///creates an Alternative from a simple async workflow without onCommit or OnFiledCommit handlers
     let fromAsync wrkfl =
-        Alt((fun (_,tran:Transaction<'s,'r>) ->
-            async{
-                try
-                    let! res = wrkfl
-                    let! _ = tran.commit (Ok(res))
-                    return ()
-                with error -> let! _ = tran.commit (Error(error))
-                              return ()
-            }),false
-        )
-    type private RestartSignal = 
-                         | Done
-                         | Restart
-                         | ThrowError of exn
-                         | ResolveStateProblem
+        {
+            run = fun (_,_) -> async{
+                                    let! res = wrkfl
+                                    return Ok(res)
+                                }
+            IsMutatesState = false
+            onCommit = emptyHandler
+        }
+    let private rand = new System.Random(DateTime.Now.Millisecond)
+    let shuffle s = Array.sortBy(fun _ -> rand.Next()) s
     ///Creates an alternative that is available when any one of the given alternatives is.
-    let rec choose<'s,'r when 's : not struct> (one:Alt<'s,'r>, two:Alt<'s,'r>)  =  
-        Alt((fun (procId,tran:Transaction<'s,'r>) ->
-            async{
-                let commitOnce = Promise.create<unit>()
-                let readyToRestart1 = Promise.create<RestartSignal>()
-                let readyToRestart2 = Promise.create<RestartSignal>()
-                let parentInitState = tran.state.Value
-                let rec runSub alt (restarter:Promise.Promise<RestartSignal>) = 
-                    let state = SingleStateKeeper(parentInitState, "choose") :> StateKeeper<'s>
-                    let subCommit (x:'r TransactionResult) = async{
-                            state.Stop()
-                            match x with
-                            | Ok(x) ->  if commitOnce.signal() then 
-                                            let! stateReply = if state.IsNotChanged then asyncReturn (Result())
-                                                              else tran.state.Merge state
-                                            match stateReply with
-                                                | Result() -> Logger.log "choose" "merge is ok stopping"
-                                                              restarter.signal(Done) |> ignore
-                                                              return! tran.commit (Ok(x))
-                                                | Die -> Logger.log "choose" "winner merge problem initiating restart"
-                                                         restarter.signal(Restart) |> ignore
-                                                         return false
-                                        else  restarter.signal(Restart)|> ignore
-                                              return false
-                            | Error(exn) -> Logger.logf "Error" "choose sub commits error %A" exn
-                                            restarter.signal(ThrowError(exn))|> ignore
-                                            return false
-                            | BlockedForever -> restarter.signal(ResolveStateProblem)|> ignore
-                                                return false
+    let choose<'s,'r when 's : not struct> (alts:Alt<'s,'r> seq)  =  
+        if Seq.length alts < 1 then never()
+        elif Seq.length alts = 1 then Seq.head alts
+        else
+        let rec loop (procId:ProcessId,state: StateKeeper<'s>) =
+                async{
+                    let parentInitState = state.Value
+                    let rec runSub alt = 
+                        let subState = SingleStateKeeper(parentInitState, "choose") :> StateKeeper<'s>
+                        async{
+                            let! res = alt.run (0, subState)
+                            subState.Stop()
+                            return res, subState, alt.onCommit
                         }
-                    run 0 {state = state; commit = subCommit} alt 
-                    
-                
-                runSub one readyToRestart1
-                runSub two readyToRestart2
-                let restarter = async{
-                    let! res1 = readyToRestart1.future
-                    let! res2 = readyToRestart2.future
-                    //Logger.logf "choose" "resolution with %A" (res1,res2)
-                    let! runProcCount = tran.state.RunningProcsCountExcludeMe(procId)
-                    let canResolveBlock = runProcCount > 0 || (obj.ReferenceEquals(parentInitState, tran.state.Value)|> not)
-                    Logger.logf "choose" "parent canResolveBlock = %A"  canResolveBlock
-                    let restart() = Logger.logf "choose" "restarting with procId = %A" procId
-                                    run procId tran (choose (one,two))
-                    match res1, res2 with
-                        | Done,_ -> return ()
-                        | _,Done -> return ()
-                        | Restart,_ -> restart()
-                                       return ()
-                        | _,Restart -> restart()
-                                       return ()
-                        | ThrowError(exn1),ThrowError(exn2) -> let! _ = tran.commit(Error(new AggregateException(exn1,exn2)))
-                                                               return ()
-                         | ThrowError(exn),_ -> let! _ = tran.commit(Error(exn))
-                                                return ()
-                         | _,ThrowError(exn) -> let! _ = tran.commit(Error(exn))
-                                                return ()
-                        | _,_ -> if canResolveBlock then restart()
-                                                         return ()
-                                 else Logger.logf "choose" "blocked stopping = %A"  procId
-                                      let! _ = tran.commit(BlockedForever)
-                                      return ()
-                                      
+
+                    let! res = alts |> Seq.map runSub |> Async.Parallel  
+                    let res = res |> shuffle                
+
+                    let ok, cancels = Array.fold (fun s t -> match s, t with
+                                                        | (Some(s), cs), (_,_,c) -> Some(s), c(false)::cs
+                                                        | (None, cs), (Ok(r),s,c) -> Some(r,s,c), cs
+                                                        | (None, cs), (BlockedForever,_,c) ->  None,  c(false)::cs) (None,[]) res
+                    for c in cancels do
+                        do! c     
+                         
+                    let swap s = async{
+                        let! stateResp =  state.Merge s
+                        match stateResp with
+                            | Result() -> return true
+                            | Die -> return false
+                        }      
+                    match ok with
+                        | Some(r,s,ñ) -> let! ok = swap s
+                                         return Ok(r)
+                        | None -> let! runProcCount = state.RunningProcsCountExcludeMe(procId)
+                                  let canResolveBlock = runProcCount > 0 || (obj.ReferenceEquals(parentInitState, state.Value)|> not)
+                                  if canResolveBlock 
+                                  then return! loop (procId,state)
+                                  else return BlockedForever
+                               
                 }
-                restarter |> Async.Start
-            }),isMutatesState2 (one,two)
-        )
+        {
+            run = loop
+            IsMutatesState = anyMutatesState alts
+            onCommit = alts |> Seq.map (fun x ->x.onCommit) |> mergeHandlers
+        }
+
     ///bind an alternative to an continuation
     let bind (one:Alt<'s,'a>, f:'a -> Alt<'s,'b>) : Alt<'s,'b> =  
         Alt((fun (procId, tran:Transaction<'s,'b>) ->
@@ -328,9 +312,7 @@ module Alt =
                          return ()
         }),true)
 
-    let private rand = new System.Random(DateTime.Now.Millisecond)
-    ///randomly shuffle seq of alternatives
-    let shuffle s = Seq.sortBy(fun _ -> rand.Next()) s
+    
     ///builder for transactional alternatives
     type TransactionBuilder() =
         member this.Bind(m, f) = bind(m,f)

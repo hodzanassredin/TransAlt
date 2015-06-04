@@ -74,7 +74,8 @@ module State =
                         | Blocked -> async{return Die}
 
                 member this.Merge keeper = 
-                    if obj.ReferenceEquals(keeper.InitValue,!refCell) 
+                    if keeper.IsNotChanged then async{return Result()}
+                    elif obj.ReferenceEquals(keeper.InitValue,!refCell) 
                     then refCell := keeper.Value
                          async{return Result()}
                     else async{return Die}
@@ -84,12 +85,13 @@ module State =
                 member this.IsNotChanged with get() : bool = obj.ReferenceEquals(value, !refCell)
                 member this.Stop () =  ()
                 member this.MergeLens lens keeper = 
-                    if obj.ReferenceEquals(keeper.InitValue, lens.get(!refCell))
+                    if keeper.IsNotChanged then async{return Result()}
+                    elif obj.ReferenceEquals(keeper.InitValue, lens.get(!refCell))
                     then refCell := lens.set(!refCell, keeper.Value)
                          async{return Result()}
                     else async{return Die}
                 member this.IsThreadSafe with get() : bool = false
-                member this.GetProcessId mutator = Async.FromContinuations(fun (cont,_,_ )->cont(0))
+                member this.GetProcessId _ = Async.FromContinuations(fun (cont,_,_ )->cont(0))
                 member this.ReleaseProcessId _ = ()
                 member this.RunningProcsCountExcludeMe _ = Async.FromContinuations(fun (cont,_,_)-> cont(0)) 
     //state keeper which maps some operations to a part of state
@@ -226,13 +228,14 @@ module State =
                     holder.future
 
                 member this.Merge keeper = 
-                    //Logger.log name "State: recieving Merge"
-                    let holder = Promise.create<StateResp<unit>>()
-                    if cts.Token.IsCancellationRequested then holder.signal(Die) |> ignore
-                    else let check () = obj.ReferenceEquals(keeper.InitValue,!refCell)
-                         let doAct () = refCell := keeper.Value
-                         agent.Post(Merge(check, doAct, fun x -> holder.signal(x) |> ignore)) 
-                    holder.future
+                    if keeper.IsNotChanged then async{return Result()}
+                    else //Logger.log name "State: recieving Merge"
+                         let holder = Promise.create<StateResp<unit>>()
+                         if cts.Token.IsCancellationRequested then holder.signal(Die) |> ignore
+                         else let check () = obj.ReferenceEquals(keeper.InitValue,!refCell)
+                              let doAct () = refCell := keeper.Value
+                              agent.Post(Merge(check, doAct, fun x -> holder.signal(x) |> ignore)) 
+                         holder.future
         
                 member this.Value with get() : 's = !refCell
                 member this.InitValue with get() : 's = value
@@ -244,12 +247,13 @@ module State =
 
                 member this.MergeLens lens keeper = 
                     //Logger.log name "State: recieving MergeLens"
-                    let holder = Promise.create<StateResp<unit>>()
-                    if cts.Token.IsCancellationRequested then holder.signal(Die) |> ignore
-                    else let check () = obj.ReferenceEquals(keeper.InitValue,lens.get(!refCell))
-                         let doAct () = refCell := lens.set(!refCell, keeper.Value)
-                         agent.Post(Merge(check, doAct, fun x -> holder.signal(x) |> ignore)) 
-                    holder.future
+                    if keeper.IsNotChanged then async{return Result()}
+                    else let holder = Promise.create<StateResp<unit>>()
+                         if cts.Token.IsCancellationRequested then holder.signal(Die) |> ignore
+                         else let check () = obj.ReferenceEquals(keeper.InitValue,lens.get(!refCell))
+                              let doAct () = refCell := lens.set(!refCell, keeper.Value)
+                              agent.Post(Merge(check, doAct, fun x -> holder.signal(x) |> ignore)) 
+                         holder.future
                 member this.IsThreadSafe with get() : bool = true
                 member this.GetProcessId mutator = 
                     if mutator then agent.PostAndAsyncReply(fun replyChannel  -> GetProcessId(replyChannel))
