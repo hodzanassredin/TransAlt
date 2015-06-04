@@ -54,9 +54,9 @@ module Alt =
             IsMutatesState = false
         }
     ///Creates an alternative that is available when any one of the given alternatives is.
-    let choose<'s,'r when 's : not struct> (alts:Alt<'s,'r> seq)  =  
-        if Seq.length alts < 1 then never()
-        elif Seq.length alts = 1 then Seq.head alts
+    let choose<'s,'r when 's : not struct> (alts:Alt<'s,'r>[])  =  
+        if alts.Length < 1 then never()
+        elif alts.Length = 1 then alts.[0]
         else
         let rec loop (procId : ProcessId, state : StateKeeper<'s>) =
                 async{
@@ -66,10 +66,10 @@ module Alt =
                         async{
                             let! res,c = alt.run (0, subState)
                             subState.Stop()
-                            return res, subState,c
+                            return res, subState, c
                         }
 
-                    let! res = alts |> Seq.map runSub |> Async.Parallel  
+                    let! res = alts |> Array.map runSub |> Async.Parallel  
                     let res = res |> shuffle                
 
                     let ok, cancels = Array.fold (fun s t -> match s, t with
@@ -155,8 +155,8 @@ module Alt =
 
     ///merges two computations in differnet ways to find a way to execute them without blocking
     let mergeChoose (one:Alt<'s,'r>, two:Alt<'s,'r2>) =  
-        choose[bind(one,fun r -> map(two, fun r2 -> r,r2)); 
-               bind(two,fun r2 -> map(one, fun r -> r,r2))]
+        choose[|bind(one,fun r -> map(two, fun r2 -> r,r2)); 
+               bind(two,fun r2 -> map(one, fun r -> r,r2))|]
     ///merges two alternatives into single one which returns both results as a tuple
     let merge (alts:Alt<'s,'a>[]) : Alt<'s, 'a[]> =  
          if alts.Length < 1 then never()
@@ -188,6 +188,20 @@ module Alt =
                 }
                 IsMutatesState = anyMutatesState alts
             }
+    let mergeTpl (alt1,alt2) =
+        {
+            run = fun (procId,state) -> async{
+                                            let res = merge[|map(alt1, fun x -> Choice1Of2(x)); 
+                                                             map(alt2, fun x -> Choice2Of2(x))|]
+                                            let! res, c = res.run (procId,state)
+                                            let res = match res with
+                                                        | Ok([| Choice1Of2(x); Choice2Of2(y)|]) -> Ok(x,y)
+                                                        | Ok([| Choice2Of2(y); Choice1Of2(x)|]) -> Ok(x,y)
+                                                        | BlockedForever -> BlockedForever
+                                            return res, c 
+                                        }
+            IsMutatesState = true
+        }
     ///uses a alternative builder function for alternative creation with specified handlers on commit or commit failure
     let withAck (builder:Alt<'s, bool> -> Async<Alt<'s,'r>>) =  
         {
@@ -276,7 +290,7 @@ module Alt =
                                                            return r, emptyHandler
                                             | Die -> //Logger.log "State client: recieved response Die" 
                                                      return BlockedForever, emptyHandler
-                                            | Error(ex) -> failwith ex
+                                            | StateResp.Error(ex) -> return raise ex
                                         }
             IsMutatesState = true
         }
@@ -319,25 +333,25 @@ module Alt =
     ///nice syntax for choose
     type ChooseBuilder() =
         [<CustomOperation("case")>]
-        member this.Case(x,y) = choose(y,x)
+        member this.Case(x,y) = choose[|y;x|]
         member this.Yield(()) = never()
     let chooseB = ChooseBuilder() 
     ///nice syntax for merge
     type MergeBuilder() =
         [<CustomOperation("case")>]
-        member this.Case(x,y) = merge(y,x)
+        member this.Case(x,y) = mergeTpl(y,x)
         member this.Yield(()) = always()
     let mergeB = MergeBuilder() 
     ///imitating joinads
     type AltQueryBuilder() =
         member this.Bind(m, f) = bind(m,f)
-        member t.Zip(xs,ys) = merge(xs,ys)
+        member t.Zip(xs,ys) = mergeTpl(xs,ys)
         member t.For(xs,f) =  bind(xs,f)
-        member t.For((x,y),f) =  bind(merge(x,y),f)
-        member t.For((x,y,z),f) = let tmp1 = merge(x,y)
-                                  let tmp2 = map(merge(tmp1,z), fun ((x,y),z) -> x,y,z)
+        member t.For((x,y),f) =  bind(mergeTpl(x,y),f)
+        member t.For((x,y,z),f) = let tmp1 = mergeTpl(x,y)
+                                  let tmp2 = map(mergeTpl(tmp1,z), fun ((x,y),z) -> x,y,z)
                                   bind(tmp2,f)
-        member t.For(x,f) =  bind(mergeXs(x),f)
+        member t.For(x,f) =  bind(merge (Array.ofSeq x),f)
         member t.Yield(x) = always(x)
         member t.Zero() = always()
         [<CustomOperation("where", MaintainsVariableSpace=true)>]

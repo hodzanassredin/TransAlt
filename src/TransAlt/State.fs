@@ -29,6 +29,7 @@ module State =
     ///response from state to a client:some result or kill signal when state could not resolve lock
     type StateResp<'a> = | Result of 'a
                          | Die
+                         | Error of exn
     ///state operation should return value or Blocked when it could not be executed on current state(like reading from an empty channel)
     type OpResp<'a> = | NotBlocked of 'a
                       | Blocked
@@ -73,6 +74,7 @@ module State =
                         | NotBlocked(s,r) -> refCell := s
                                              async{return Result(r)}
                         | Blocked -> async{return Die}
+                        | Error(ex) -> async{return StateResp.Error(ex)}
 
                 member this.Merge keeper = 
                     if keeper.IsNotChanged then async{return Result()}
@@ -218,8 +220,12 @@ module State =
                             | NotBlocked(state, res) -> holder.signal(Result(res)) |> ignore
                                                         NotBlocked(state)
                             | Blocked -> Blocked
+                            | Error(ex) -> holder.signal(StateResp.Error(ex)) |> ignore
+                                           Error(ex)
                     | Die ->  holder.signal(Die) |> ignore
                               Blocked
+                    | StateResp.Error(ex) ->  holder.signal(StateResp.Error(ex)) |> ignore
+                                              Error(ex)
 
             interface StateKeeper<'s> with 
                 member this.Apply (procId,f) = 
