@@ -6,7 +6,9 @@
 (**
 TransAlt
 ======================
-This project is a proof of concept implementation of async computation workflows composition with non determenistic choice, merge and bind based on immutable state with lock detection. Uses ideas from Stm,Hopac,Joinads.
+This project is a proof of concept implementation of async computation workflows composition 
+with non determenistic choice, merge and bind based on immutable state with lock detection. 
+Uses ideas from Stm,Hopac,Joinads. Main idea is to resolve deadlocks [like this joinads deadlock](https://gist.github.com/hodzanassredin/6979d9845bada2798fdc)
 
 <div class="row">
   <div class="span1"></div>

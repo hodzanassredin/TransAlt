@@ -109,7 +109,7 @@ module Alt =
                 match res with
                     | Ok(r) -> let! res2,c2 = (f(r)).run (procId,state)
                                match res2 with
-                                | Ok(r2) -> return (res2, mergeHandlers [c;c2]) 
+                                | Ok(_) -> return (res2, mergeHandlers [c;c2]) 
                                 | BlockedForever -> do! c(false)
                                                     do! c2(false)
                                                     return BlockedForever, emptyHandler
@@ -127,7 +127,7 @@ module Alt =
     
     ///whileLoop alternaive for builder
     let rec whileLoop guard body =
-        if guard() then bind(body, fun x -> whileLoop guard body)
+        if guard() then bind(body, fun _ -> whileLoop guard body)
                         else always () 
     ///try with alternative for builder
     let tryWith body compensation = 
@@ -253,7 +253,7 @@ module Alt =
     let pickWithResultState state alt  = 
         let stateR = SingleStateKeeper(state, "pick") :> StateKeeper<_>
         async{
-            let res = alt.run (0, stateR)
+            let! res = alt.run (0, stateR)
             return res, stateR.Value
         }
     ///run altrnative and return result as an promise
