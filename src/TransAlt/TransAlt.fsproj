@@ -46,8 +46,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Logger.fs" />
-    <Compile Include="Promise.fs" />
-    <Compile Include="State.fs" />
     <Compile Include="Alternatives.fs" />
     <Compile Include="Channel.fs" />
     <None Include="paket.references" />

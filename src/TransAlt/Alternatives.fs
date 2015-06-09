@@ -1,303 +1,167 @@
 namespace TransAlt
 ///first class cancellable async operations    
-module Alt =
-    open State
+module Transaction =
     open System
 
-    //simle async monad return
-    let asyncReturn x = Async.FromContinuations(fun (cont,_,_) -> cont(x))
-
-    type StateChangeOp<'s,'r> = 's -> 's * 'r
-    ///result of a transaction
-    type Result<'r> = | Ok of 'r
-                      | BlockedForever
-    type CommitHandler = bool -> Async<unit>       
-
-    let emptyHandler : CommitHandler= fun _ -> asyncReturn ()        
-    let rec mergeHandlers handls  : CommitHandler = 
-            fun res -> async{
-                for handler in handls do
-                    do! handler(res)
-                }
-               
-    ///first class cancellable transactional async computation
-    type Alt<'s,'r when 's : not struct> = 
-        {
-            run : ProcessId * StateKeeper<'s>->Async<Result<'r> * CommitHandler> 
-            IsMutatesState : bool
-        }
-    ///checks is any of transactions can mutate state
-    let anyMutatesState alts = 
-        alts |> Seq.exists(fun x -> x.IsMutatesState)
-
-    ///map ans async result
-    let asyncMap wrkfl f = async{
-        let! r = wrkfl
-        return f(r)
-    }
-    ///run given computation in a given transaction asynchronously
-    ///creates an Alternative from a simple async workflow without onCommit or OnFiledCommit handlers
-    let fromAsync wrkfl =
-        {
-            run = fun (_,_) -> async{
-                                    let! res = wrkfl
-                                    return Ok(res),emptyHandler
-                                }
-            IsMutatesState = false
-        }
-    let private rand = new System.Random(DateTime.Now.Millisecond)
-    let shuffle s = Array.sortBy(fun _ -> rand.Next()) s
-    ///never commits success
-    let never() =
-        {
-            run = fun (_,_) -> asyncReturn (BlockedForever,emptyHandler)
-            IsMutatesState = false
-        }
-    ///Creates an alternative that is available when any one of the given alternatives is.
-    let choose<'s,'r when 's : not struct> (alts:Alt<'s,'r>[])  =  
-        if alts.Length < 1 then never()
-        elif alts.Length = 1 then alts.[0]
-        else
-        let rec loop (procId : ProcessId, state : StateKeeper<'s>) =
-                async{
-                    let parentInitState = state.Value
-                    let rec runSub alt = 
-                        let subState = SingleStateKeeper(parentInitState, "choose") :> StateKeeper<'s>
-                        async{
-                            let! res,c = alt.run (0, subState)
-                            subState.Stop()
-                            return res, subState, c
-                        }
-
-                    let! res = alts |> Array.map runSub |> Async.Parallel  
-                    let res = res |> shuffle                
-
-                    let ok, cancels = Array.fold (fun s t -> match s, t with
-                                                        | (Some(s), cs), (_,_,c) -> Some(s), c(false)::cs
-                                                        | (None, cs), (Ok(r),s,c) -> Some(r,s,c), cs
-                                                        | (None, cs), (BlockedForever,_,c) ->  None,  c(false)::cs) (None,[]) res
-                    let! _ = Async.Parallel cancels   
-                         
-                    let swap s = async{
-                        let! stateResp =  state.Merge s
-                        match stateResp with
-                            | Result() -> return true
-                            | Die -> return false
-                        }      
-                    match ok with
-                        | Some(r,s,c) -> let! ok = swap s
-                                         if ok then return Ok(r),c
-                                         else do! c(false)
-                                              return! loop (procId,state) 
-                        | None -> let! runProcCount = state.RunningProcsCountExcludeMe(procId)
-                                  let canResolveBlock = runProcCount > 0 || (obj.ReferenceEquals(parentInitState, state.Value)|> not)
-                                  if canResolveBlock 
-                                  then return! loop (procId,state)
-                                  else return BlockedForever, emptyHandler
-                               
-                }
-        {
-            run = loop
-            IsMutatesState = anyMutatesState alts
-        }
-
-    ///bind an alternative to an continuation
-    let bind (one:Alt<'s,'a>, f:'a -> Alt<'s,'b>) : Alt<'s,'b> =  
-          {
-            run = fun (procId,state) -> async{
-                let! res,c = one.run (procId,state)
-                match res with
-                    | Ok(r) -> let! res2,c2 = (f(r)).run (procId,state)
-                               match res2 with
-                                | Ok(_) -> return (res2, mergeHandlers [c;c2]) 
-                                | BlockedForever -> do! c(false)
-                                                    do! c2(false)
-                                                    return BlockedForever, emptyHandler
-                    | BlockedForever -> do! c(false)
-                                        return BlockedForever, emptyHandler
+    type CommitReciever = bool -> Async<unit>
+    let emptyReciever : CommitReciever= fun _ -> async.Return ()
+    let mergeRecievers (xs: CommitReciever seq) =
+        fun res -> async{
+                for x in xs do
+                    do! x(res)
             }
-            IsMutatesState = false
-        }//tod static checking
-    ///always commits success with a given value
-    let always v = v |> asyncReturn |> fromAsync
-    ///always commits success with unit
-    let unit () = always ()
+    type IsReader = bool
+    type Transaction<'s,'r> = Tran of ('s -> Async<Result<'s,'r>>)
+    and Result<'s,'r> = | Finished of 's * 'r * CommitReciever
+                        | Sync of 's * Transaction<'s,'r> * CommitReciever * IsReader
+    
+    let fromAsync wrkfl = 
+        Tran(fun state -> async{
+            let! res = wrkfl
+            return Finished(state, res, emptyReciever)
+        })
+
+    let always x = async.Return x |> fromAsync
+    let withRcvr x rcvr = 
+        Tran(fun state -> async{
+            return Finished(state, x, rcvr)
+        })
+
+    let rec run state (Tran(f)) = 
+         async{
+            let! res = f(state)
+            match res with
+                 | Finished(s,r,c) -> return Some(s,r,c) 
+                 | Sync(s,t,c,isReader) -> if isReader then do! c(false)
+                                                            return None
+                                           else return! run s t
+        }
+    let step (state:'s) (tr: Transaction<'s,'r>) = 
+        match tr with Tran(f) -> f(state)
+
+    let rec never<'s,'r> () : Transaction<'s,'r> = 
+        Tran(fun state -> async{
+                return Sync(state, never<'s,'r> (), emptyReciever, true)
+            })
+
+    let getState res = 
+        match res with 
+            | Finished (s,_,_) -> s
+            | Sync (s,_,_,_) -> s    
+
+    let choose xs =
+        let rnd = new Random()
+        Tran(fun state -> async{
+            let run = run state
+            let! res = xs |> Seq.map run |> Async.Parallel
+            let res = Array.choose (fun x->x) res
+            if res.Length = 0 then return Sync(state, never(), emptyReciever, true)
+            else let winner = rnd.Next(res.Length - 1)
+                 let s, r, c = res.[winner]
+                 for i in 0.. res.Length do
+                     if i <> winner then
+                         let _,_,c = res.[i]
+                         do! c(false)
+                 return Finished(s,r,c)
+        })
+
+    let rec bind (t:Transaction<'s,'r>,f:'r->Transaction<'s,'r2>) =
+        Tran(fun (state:'s) -> async{
+            let! res = step state t
+            match res with
+                | Finished (s,r,c) -> let next = f(r)
+                                      let! res = step s next
+                                      match res with 
+                                        | Finished (s2,r2,c2) -> return Finished(s2,r2, mergeRecievers [c;c2])
+                                        | Sync (s2,t2,c2, isReader) -> return Sync(s2,t2, mergeRecievers [c;c2],isReader)
+                | Sync (s,t,c,isReader) -> return Sync(s,bind (t,f),c,isReader) 
+        })
+
+    let rec inline mergeInt(xs:Transaction<'s,'r> seq) (finished: 'r[]) (finishedRcvr: CommitReciever): Transaction<'s,'r[]> =
+        if Seq.length xs = 0 then withRcvr finished finishedRcvr
+        else Tran(fun (state:'s) -> async{
+                let step x = step state x
+                let! res = xs |> Seq.map step |> Async.Parallel
+                let states = res |> Array.map getState
+                let inline folder s s2 = s +++ s2
+                let state = Array.fold folder state states 
+                let finished2, finishedRcvrs2 = res |> Array.choose (fun x -> match x with 
+                                                                                | Finished (_,r,c) ->Some(r,c)
+                                                                                | _ -> None) 
+                                                    |> Array.unzip
+                let synced, syncRcvrs, readers= res |> Array.choose (fun x -> match x with 
+                                                                | Sync (_,t,c, isReader) ->Some(t,c,isReader)
+                                                                | _ -> None) 
+                                                            |> Array.unzip3
+                let finishedRcvr = Array.collect id [|[|finishedRcvr|]; finishedRcvrs2|] |> mergeRecievers
+                let allRcvrs =   Array.collect id [|[|finishedRcvr|]; syncRcvrs|] |> mergeRecievers
+                let tran = mergeInt synced (Array.append finished finished2) finishedRcvr
+                let IsReader = Array.TrueForAll(readers, fun x-> x)
+                return Sync(state, tran, allRcvrs, IsReader)
+             })
+
+    let inline merge xs = mergeInt xs [||] emptyReciever
+
+    let rec wrap tran c =
+        Tran(fun state -> async{
+            let! res = step state tran
+            match res with 
+                | Finished (s2,r2,c2) -> return Finished(s2,r2, mergeRecievers [c;c2])
+                | Sync (s2,t2,c2, isReader) -> return Sync(s2,wrap t2 c, mergeRecievers [c;c2],isReader)
+        })
+
+    let withAck builder = async{
+            let! tran, c = builder()
+            return wrap tran c
+        }
     ///maps a result of an alternative into other alternative
     let map (alt,f) = bind(alt, fun x -> always(f(x)))
-    
-    ///whileLoop alternaive for builder
+        ///whileLoop alternaive for builder
     let rec whileLoop guard body =
         if guard() then bind(body, fun _ -> whileLoop guard body)
                         else always () 
+
     ///try with alternative for builder
     let tryWith body compensation = 
-        {
-            run = fun (procId,state) -> async{
-                                            try
-                                                let! res = body.run (procId,state)
-                                                return res
-                                            with ex -> return compensation(ex)
-                                        }
-            IsMutatesState = true
-        }
+        Tran(fun state -> async{
+            try
+                let! res = step state body
+                return res
+            with ex ->  return compensation(ex)
+        })
+
     ///try finally alternative for builder
     let tryFinally body compensation = 
-       {
-            run = fun (procId,state) -> async{
-                                            try
-                                                let! res = body.run (procId,state)
-                                                return res
-                                            finally
-                                                compensation()
-                                        }
-            IsMutatesState = body.IsMutatesState
-        }
+       Tran(fun state -> async{
+            try
+                let! res = step state body
+                return res
+            finally
+                compensation()
+        })
 
-    ///merges two computations in differnet ways to find a way to execute them without blocking
-    let mergeChoose (one:Alt<'s,'r>, two:Alt<'s,'r2>) =  
-        choose[|bind(one,fun r -> map(two, fun r2 -> r,r2)); 
-               bind(two,fun r2 -> map(one, fun r -> r,r2))|]
-    ///merges two alternatives into single one which returns both results as a tuple
-    let merge (alts:Alt<'s,'a>[]) : Alt<'s, 'a[]> =  
-         if alts.Length < 1 then never()
-         elif alts.Length = 1 then map(alts.[0], fun x -> [|x|])
-         else {
-                run = fun (procId,parentState) -> async{
-                    let state = if parentState.IsThreadSafe 
-                                    then parentState
-                                    else (new MailboxStateKeeper<_>(parentState.Value, "merge")) :> StateKeeper<_>
-                    let run i alt =
-                        async{
-                            let! procId = if i = 0 then asyncReturn procId
-                                          else state.GetProcessId(alt.IsMutatesState)
-                            return! alt.run (procId, state)
-                        }
-                    let! res = alts |> Array.mapi run |> Async.Parallel
-                    //if parentState.IsThreadSafe then parentState.ReleaseProcessId(procId)
-                    
-                    
-                    if parentState.IsThreadSafe |> not then state.Stop()
-                    let ok = Array.TrueForAll(res , fun (r,c) -> match r with
-                                                            | Ok(r) -> true 
-                                                            | BlockedForever -> false)
-                    if ok 
-                    then let res,cs = Array.map (fun (Ok(r),c) -> r,c) res |> Array.unzip
-                         return Ok(res), mergeHandlers cs
-                    else let! _ = res |> Array.map (fun (_,c) -> c(false)) |> Async.Parallel
-                         return BlockedForever, emptyHandler
-                }
-                IsMutatesState = anyMutatesState alts
-            }
-    let mergeTpl (alt1,alt2) =
-        {
-            run = fun (procId,state) -> async{
-                                            let res = merge[|map(alt1, fun x -> Choice1Of2(x)); 
-                                                             map(alt2, fun x -> Choice2Of2(x))|]
-                                            let! res, c = res.run (procId,state)
-                                            let res = match res with
-                                                        | Ok([| Choice1Of2(x); Choice2Of2(y)|]) -> Ok(x,y)
-                                                        | Ok([| Choice2Of2(y); Choice1Of2(x)|]) -> Ok(x,y)
-                                                        | BlockedForever -> BlockedForever
-                                            return res, c 
-                                        }
-            IsMutatesState = true
-        }
-    ///uses a alternative builder function for alternative creation with specified handlers on commit or commit failure
-    let withAck (builder:Alt<'s, bool> -> Async<Alt<'s,'r>>) =  
-        {
-            run = fun (procId,state) -> async{
-                                            let p = Promise.create<_>()
-                                            let nack = fromAsync p.future
-                                            let! alt = builder(nack)
-                                            let! res, c = alt.run (procId,state)
-                                            return res, mergeHandlers [c; fun x -> p.signal(x) |> ignore
-                                                                                   asyncReturn ()] 
-                                        }
-            IsMutatesState = true
-        }
-    ///attahes an on success handler
-    let wrap (alt,f) =  
-        {
-            run = fun (procId,state) -> async{
-                                            let! res, c = alt.run (procId,state)
-                                            return res, mergeHandlers [c; f] 
-                                        }
-            IsMutatesState = alt.IsMutatesState
-        }
-    let guard g = withAck <| fun _ -> g
-    let delay f = guard( async{ return! f()})
     //if else expression for alternatives
     let ife (pred,thenAlt, elseAlt) = 
         bind(pred, fun x ->
                     if x then thenAlt
                     else elseAlt)
-
-    ///returns alternative which returns None
-    let none() = always None
-    ///returns alternative which wraps returned result into a Some(v)
-    let some alt = bind(alt, fun x -> always <| Some(x))
-    ///commits result only if alt commits a value which is f(value) = true
     let where (alt,f) = bind(alt, fun x ->
                             if f(x) then always x
                             else never ())
-    ///commits value after a specified amount of time
-    let after ms v = async{
-                        do! Async.Sleep(ms)
-                        return v} |> fromAsync
-    ///reduces seq of altrnatives with mergeChoose
-    let mergeChooseXs (xs:Alt<'s,'r> seq) : Alt<'s,'r seq> = 
-        Seq.fold (fun (x:Alt<'s,'r seq>) (y:Alt<'s,'r>) -> 
-            map(mergeChoose (x,y), fun (x,y) -> seq{yield y
-                                                    yield! x})) (always(Seq.empty)) xs
-    ///run altrnative and return result as an promise which will return result with a resulting state 
-    let pickWithResultState state alt  = 
-        let stateR = SingleStateKeeper(state, "pick") :> StateKeeper<_>
-        async{
-            let! res = alt.run (0, stateR)
-            return res, stateR.Value
-        }
-    ///run altrnative and return result as an promise
-    let pick state alt  =
-        async{
-            let! r,_ = pickWithResultState state alt 
-            return r
-        }
-    ///map state
-    let mapSt lens alt =
-        {
-            run = fun (procId,state) -> 
-                                        async{
-                                            let st = new MapStateKeeper<_,_>(state, lens) :> StateKeeper<_>
-                                            let! res, c = alt.run (procId,st)
-                                            return res, c 
-                                        }
-            IsMutatesState = alt.IsMutatesState
-        }
-    ///alternative for a state operation execution
-    let stateOp op =
-        {
-            run = fun (procId,state) -> async{
-                                            let safeOp :StateOp<_,_> =
-                                                   fun s -> try 
-                                                                match op s with
-                                                                    | NotBlocked(s,r) -> NotBlocked(s,Ok(r))
-                                                                    | Blocked -> Blocked 
-                                                            with exn -> Error(exn)
-                                            let! res = state.Apply(procId,safeOp)
-                                        //Logger.logf  "State client: recieved response %A" res
-                                        match res with
-                                            | Result(r) -> //Logger.logf  "State client: recieved response %A" r
-                                                           return r, emptyHandler
-                                            | Die -> //Logger.log "State client: recieved response Die" 
-                                                     return BlockedForever, emptyHandler
-                                            | StateResp.Error(ex) -> return raise ex
-                                        }
-            IsMutatesState = true
-        }
-            
-        
 
-    
+    let unit () = always ()
+
+    let inline mergeTpl (t1,t2) =
+        Tran(fun state -> async{
+                            let t = merge[|map(t1, fun x -> Choice1Of2(x)); 
+                                             map(t2, fun x -> Choice2Of2(x))|]
+                            let maper res  = match res with
+                                                | [| Choice1Of2(x); Choice2Of2(y)|] -> (x,y)
+                                                | [| Choice2Of2(y); Choice1Of2(x)|] -> (x,y)
+                            let res = map(t,maper)
+                            return! step state res
+                        })
+
     ///builder for transactional alternatives
     type TransactionBuilder() =
         member this.Bind(m, f) = bind(m,f)
@@ -339,30 +203,44 @@ module Alt =
     ///nice syntax for merge
     type MergeBuilder() =
         [<CustomOperation("case")>]
-        member this.Case(x,y) = mergeTpl(y,x)
+        member inline this.Case(x,y) = mergeTpl(y,x)
         member this.Yield(()) = always()
     let mergeB = MergeBuilder() 
     ///imitating joinads
     type AltQueryBuilder() =
         member this.Bind(m, f) = bind(m,f)
-        member t.Zip(xs,ys) = mergeTpl(xs,ys)
+        member inline t.Zip(xs,ys) = mergeTpl(xs,ys)
         member t.For(xs,f) =  bind(xs,f)
-        member t.For((x,y),f) =  bind(mergeTpl(x,y),f)
-        member t.For((x,y,z),f) = let tmp1 = mergeTpl(x,y)
+        member inline t.For((x,y),f) =  bind(mergeTpl(x,y),f)
+        member inline t.For((x,y,z),f) = 
+                                  let tmp1 = mergeTpl(x,y)
                                   let tmp2 = map(mergeTpl(tmp1,z), fun ((x,y),z) -> x,y,z)
                                   bind(tmp2,f)
-        member t.For(x,f) =  bind(merge (Array.ofSeq x),f)
+        member inline t.For(x,f) =  bind(merge (Array.ofSeq x),f)
         member t.Yield(x) = always(x)
         member t.Zero() = always()
         [<CustomOperation("where", MaintainsVariableSpace=true)>]
-        member x.Where
-            ( source:Alt<'s,'r>, 
-              [<ProjectionParameter>] f:'r -> bool ) : Alt<'s,'r> = where(source,f)
+        member inlinex.Where
+            ( source:Transaction<'s,'r>, 
+              [<ProjectionParameter>] f:'r -> bool ) : Transaction<'s,'r> = where(source,f)
 
         [<CustomOperation("select")>]
         member x.Select
-            ( source:Alt<'s,'r>, 
-              [<ProjectionParameter>] f:'r -> 'r2) : Alt<'s,'r2> = map(source,f)
+            ( source:Transaction<'s,'r>, 
+              [<ProjectionParameter>] f:'r -> 'r2) : Transaction<'s,'r2> = map(source,f)
  
     let queryB = new AltQueryBuilder()
-    
+
+
+module Crdt =
+    //https://github.com/aphyr/meangirls#lww-element-set
+    type GSet<'a when 'a : comparison>() =
+        let set = Set.empty
+        with member x.add v = set.Add v
+             member x.toSet  () = set 
+             member x.difference (set2:GSet<'a>) = Set.difference set (set2.toSet())
+             member x.intersect (set2:GSet<'a>) = Set.intersect set (set2.toSet())
+             member x.union (set2:GSet<'a>) = Set.union set (set2.toSet())
+             member x.isEmpty with get() = Set.isEmpty
+             static member Empty with get() = new GSet<_>()
+             static member (+++)  (set1:GSet<'a>,set2:GSet<'a>) = set1.union(set2) 
